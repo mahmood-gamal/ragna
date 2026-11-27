@@ -1,0 +1,32 @@
+{
+  "maxBaseLevel": 99,
+  "maxStatValue": 99,
+  "startingStatValue": 1,
+  "startingStatPoints": 48,
+  "exp": {
+    "base": 5,
+    "factor": 4,
+    "exponent": 2.2
+  },
+  "statPoints": {
+    "base": 3,
+    "bonusEvery": 5
+  },
+  "hp": {
+    "base": 35,
+    "perLevel": 5,
+    "percentPerStat": 1
+  },
+  "sp": {
+    "base": 10,
+    "perLevel": 1,
+    "percentPerStat": 1
+  },
+  "attackSpeed": {
+    "baseDelay": 1.0,
+    "agiReduction": 0.004,
+    "dexReduction": 0.001,
+    "maxReduction": 0.6,
+    "minDelay": 0.2
+  }
+}

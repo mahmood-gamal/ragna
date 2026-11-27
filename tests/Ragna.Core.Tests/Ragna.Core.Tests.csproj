@@ -21,6 +21,10 @@
     <Using Include="Xunit" />
   </ItemGroup>
   <ItemGroup>
+    <!-- The real game data, so tests catch a broken table. -->
+    <None Include="../../data/stats/stat_table.json" Link="data/stats/stat_table.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="../../scripts/core/Ragna.Core.csproj" />
   </ItemGroup>
 </Project>
