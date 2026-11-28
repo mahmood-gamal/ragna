@@ -20,6 +20,12 @@ public sealed record ItemDefinition
     /// <summary>Colour of the placeholder ground sprite as <c>#rrggbb</c>.</summary>
     public string Tint { get; init; } = "#ffffff";
 
+    /// <summary>Most of this item one inventory slot holds. 1 means it doesn't stack.</summary>
+    public int MaxStack { get; init; } = DefaultMaxStack;
+
+    /// <summary>The <see cref="MaxStack"/> used when the data leaves it out.</summary>
+    public const int DefaultMaxStack = 99;
+
     /// <summary>Throws <see cref="InvalidDataException"/> if any value is out of range.</summary>
     public void Validate()
     {
@@ -31,6 +37,11 @@ public sealed record ItemDefinition
         if (!MonsterDefinition.TryParseTint(Tint, out _, out _, out _))
         {
             throw new InvalidDataException($"Item '{Id}': tint must look like #rrggbb.");
+        }
+
+        if (MaxStack < 1)
+        {
+            throw new InvalidDataException($"Item '{Id}': maxStack must be at least 1.");
         }
     }
 }

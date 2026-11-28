@@ -43,9 +43,10 @@ dotnet test
 | `assets/terrain/` | Terrain MeshLibrary, materials and textures |
 | `tools/` | Asset build scripts (`tools/build_terrain.sh`, `tools/characters/make_placeholder_sprites.py`) |
 | `scenes/items/` | Items on the ground (`GroundItem.tscn`) |
+| `scenes/ui/` | UI windows (`InventoryWindow.tscn`) |
 | `scenes/actors/` | Characters (`Player.tscn`, `Monster.tscn`) and the character sprite with its blob shadow (`CharacterVisual.tscn`) |
 | `assets/characters/` | Character sprite sheets and `SpriteFrames` |
-| `docs/` | Guides, for example [terrain and GridMap painting](docs/terrain.md), the [game camera](docs/camera.md), [click-to-move and navmesh baking](docs/navigation.md) and [character sprites](docs/characters.md), [stats, levels and EXP](docs/stats.md), [combat](docs/combat.md), [monsters, AI and spawn points](docs/monsters.md) and [item drops and pick-up](docs/items.md) |
+| `docs/` | Guides, for example [terrain and GridMap painting](docs/terrain.md), the [game camera](docs/camera.md), [click-to-move and navmesh baking](docs/navigation.md) and [character sprites](docs/characters.md), [stats, levels and EXP](docs/stats.md), [combat](docs/combat.md), [monsters, AI and spawn points](docs/monsters.md), [item drops and pick-up](docs/items.md) and the [inventory](docs/inventory.md) |
 | `tests/` | xUnit test projects (excluded from the game assembly, ignored by Godot) |
 
 ## Controls
@@ -55,10 +56,11 @@ dotnet test
 | Left mouse button | Walk to the clicked ground; hold it to keep walking towards the cursor |
 | Left-click a monster | Walk into range and attack it until it dies (click the ground to stop) |
 | Left-click an item on the ground | Walk to it and pick it up |
+| **I** | Open or close the inventory |
 | **Q** / **E** | Turn the camera 45° around the player |
 | Mouse wheel | Zoom in and out |
 
-See [docs/navigation.md](docs/navigation.md), [docs/camera.md](docs/camera.md), [docs/combat.md](docs/combat.md), [docs/monsters.md](docs/monsters.md) and [docs/items.md](docs/items.md).
+See [docs/navigation.md](docs/navigation.md), [docs/camera.md](docs/camera.md), [docs/combat.md](docs/combat.md), [docs/monsters.md](docs/monsters.md), [docs/items.md](docs/items.md) and [docs/inventory.md](docs/inventory.md).
 
 ## C# conventions
 

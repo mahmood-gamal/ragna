@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/gameplay/Movement/ClickToMoveController.cs" id="1_move"]
 [ext_resource type="PackedScene" path="res://scenes/actors/CharacterVisual.tscn" id="2_visual"]
 [ext_resource type="Script" path="res://scripts/gameplay/Combat/PlayerCombat.cs" id="3_combat"]
 [ext_resource type="Script" path="res://scripts/gameplay/Items/PlayerPickup.cs" id="4_pickup"]
+[ext_resource type="Script" path="res://scripts/gameplay/Items/PlayerInventory.cs" id="5_inventory"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
 radius = 0.35
@@ -30,6 +31,9 @@ height = 1.7
 
 [node name="Combat" type="Node" parent="."]
 script = ExtResource("3_combat")
+
+[node name="Inventory" type="Node" parent="."]
+script = ExtResource("5_inventory")
 
 [node name="Pickup" type="Node" parent="."]
 script = ExtResource("4_pickup")

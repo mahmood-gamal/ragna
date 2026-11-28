@@ -9,7 +9,8 @@ namespace Ragna.Gameplay.Items;
 /// <summary>
 /// Click-to-pick-up for the player. Left-click an item on the ground: the player walks to it along
 /// the navmesh and picks it up once within <see cref="Reach"/>. Clicking the ground or a monster
-/// drops the order. The rules live in <see cref="PickupOrder"/>.
+/// drops the order. The rules live in <see cref="PickupOrder"/>. Picked-up items go into the
+/// player's <see cref="PlayerInventory"/>; an item that doesn't fit stays on the ground.
 /// </summary>
 /// <remarks>
 /// Put it as a child of the player's <see cref="ClickToMoveController"/>, after the
@@ -24,9 +25,10 @@ public partial class PlayerPickup : Node
     private ClickToMoveController _body = null!;
     private PlayerCombat? _combat;
     private GroundItem? _target;
+    private PlayerInventory? _inventory;
 
     /// <summary>
-    /// Raised when the player picks something up. The inventory (GAM-14) listens to this.
+    /// Raised when the player picks something up, after it has gone into the inventory.
     /// </summary>
     public event Action<ItemDefinition, int>? PickedUp;
 
@@ -47,6 +49,11 @@ public partial class PlayerPickup : Node
             ?? throw new InvalidOperationException($"{Name} must be a child of a ClickToMoveController.");
         _order = new PickupOrder(Reach);
         _combat = _body.GetChildren().OfType<PlayerCombat>().FirstOrDefault();
+        _inventory = _body.GetChildren().OfType<PlayerInventory>().FirstOrDefault();
+        if (_inventory is null)
+        {
+            GD.PushWarning($"{Name}: the player has no PlayerInventory; picked-up items are lost.");
+        }
         if (_combat is not null)
         {
             // Attacking a monster or dying ends the walk to an item.
@@ -119,11 +126,18 @@ public partial class PlayerPickup : Node
     {
         var item = _target!;
         _target = null;
+        if (_inventory is not null && _inventory.Inventory.SpaceFor(item.Item) < item.Quantity)
+        {
+            GD.Print($"Inventory is full: {item.Caption} stays on the ground.");
+            return;
+        }
+
         if (!item.PickUp())
         {
             return;
         }
 
+        _inventory?.Inventory.Add(item.Item, item.Quantity);
         PickedUp?.Invoke(item.Item, item.Quantity);
         GD.Print($"Picked up {item.Caption}.");
     }
