@@ -2,7 +2,7 @@
 
 A dialogue scene is a JSON file in `data/dialogue/`. Adding a scene needs no code. [`data/dialogue/example.json`](../data/dialogue/example.json) shows every command.
 
-This page covers the script format, the runner and the [dialogue scene UI](#the-dialogue-scene). NPC triggers are a separate ticket.
+This page covers the script format, the runner, the [dialogue scene UI](#the-dialogue-scene), [portrait art](#portrait-art) and how [NPCs and story triggers](#npcs-and-story-triggers) start a scene.
 
 ## File format
 
@@ -107,7 +107,7 @@ DialogueScene.Instance!.Finished += id => GD.Print($"{id} is over");
 What it shows:
 
 - **Portraits.** Busts stand along the bottom of the screen in their slot. The speaker shows at full brightness and size; everyone else is dimmed and slightly smaller. During narration everyone is dimmed. Portraits slide and fade in from their side of the screen, and out again.
-- **Portrait art.** `res://assets/portraits/<character>/<expression>.png`, for example `assets/portraits/elder/happy.png`. A missing expression falls back to the character's `neutral.png`. A character with no art yet gets a drawn placeholder bust with a simple face for each expression.
+- **Portrait art.** `res://assets/portraits/<character>/<expression>.png`, for example `assets/portraits/elder/happy.png`. A missing expression falls back to the character's `neutral.png`. A character with no art yet gets a drawn placeholder bust with a simple face for each expression. See [Portrait art](#portrait-art) for the size and anchor.
 - **Text box.** Along the bottom, with the speaker's name on a plate above it. The name is the character id in title case (`old_man` shows as `Old Man`). Narration has no plate and lighter text. A blinking ▼ means the line is complete.
 - **Typewriter.** `CharactersPerSecond` on the node (default 40; 0 shows lines at once).
 - **Background.** With no `background`, the world shows dimmed and blurred (`assets/shaders/dialogue_blur.gdshader`). `"image"` shows a full-screen image instead: a `res://` path, or a name in `res://assets/backgrounds/` (`"village"` is `village.png`). An image that can't be found logs a warning and shows the world.
@@ -115,3 +115,61 @@ What it shows:
 ![A group scene of four over a full-screen image](images/dialogue-group.png)
 
 A group of four over a full-screen image, made with a test script. The mage on the left uses `"flip": true`.
+
+## Portrait art
+
+Each character has a folder of bust portraits, one PNG per expression:
+
+```
+assets/portraits/<character>/<expression>.png
+assets/portraits/elder/neutral.png
+assets/portraits/elder/happy.png
+```
+
+| Rule | Value |
+| --- | --- |
+| Character folder | The character id used in scripts: lower case letters, digits and `_` (`old_man`) |
+| File name | One of the [expressions](#commands): `neutral`, `happy`, `angry`, `sad`, `surprised` |
+| Required | `neutral.png`. Any other missing expression shows `neutral.png` |
+| Size | **300 x 440 px** (`PortraitArt.Width` x `PortraitArt.Height`, the default `DialogueScene.PortraitSize`). Other sizes are scaled to fit, keeping their aspect |
+| Background | Transparent |
+| Facing | Facing **right**. Portraits in the `right` and `far_right` slots are mirrored |
+| Anchor | **Bottom centre.** The bottom pixel row stands on the bottom edge of the screen, centred on the slot. Draw the bust down to the bottom edge, with the head in the top half |
+
+The placeholder busts for `elder` and `hero` are drawn by `tools/portraits/make_placeholder_portraits.py` (needs Pillow). Add a character to `CHARACTERS` in that script and run it again, or replace the PNGs with real art of the same size. A test (`PortraitArtTests`) checks every file's name and size, and that every character in `data/dialogue/` has a `neutral.png`.
+
+Godot imports new PNGs when the editor next opens the project.
+
+## NPCs and story triggers
+
+Two things in the world start a dialogue scene.
+
+**NPCs.** `scenes/actors/Npc.tscn` is a character the player can talk to. Left-click it: the player walks over, the two turn to face each other, and its scene plays. Set on the node:
+
+| Property | What it does |
+| --- | --- |
+| `DialogueId` | The script to play, `data/dialogue/<DialogueId>.json` |
+| `DisplayName` | Name shown above its head |
+| `Tint` | Colour for the placeholder sprite |
+
+NPCs sit on the `npcs` physics layer (layer 5). Talking is handled by `PlayerTalk`, a child of the player after `Pickup`. Clicking the ground, a monster or an item cancels the walk to an NPC; clicking an NPC cancels walking to an item or attacking.
+
+**Story triggers.** `scenes/triggers/StoryTrigger.tscn` is an `Area3D` (a 4 x 2 x 4 m box; resize its `Collision` shape) that plays a scene when the player walks in. The player stops walking.
+
+| Property | Default | What it does |
+| --- | --- | --- |
+| `DialogueId` | | The script to play |
+| `Once` | `true` | Play only once per game |
+| `OnceFlag` | `trigger.<DialogueId>` | The [dialogue flag](save.md#dialogue-flags) that remembers it played. It is saved, so a played trigger stays played after a load |
+| `RequiredFlag`, `RequiredValue` | none, `true` | Only play once that flag equals the value, for example after a talk set it |
+
+The rules live in `StoryTriggerRule` (`scripts/core/Dialogue/`).
+
+### On the test map
+
+| What | Where | Script |
+| --- | --- | --- |
+| The Village Elder (NPC) | (26, 0, 21), a few metres from where the player starts | [`elder_greeting.json`](../data/dialogue/elder_greeting.json) |
+| Village arrival (story trigger, once) | (20, 0, 19), on the dirt path past the elder | [`village_arrival.json`](../data/dialogue/village_arrival.json) |
+
+`elder_greeting` is the sample conversation: the elder and the hero, with expression changes, and a choice that sets `promised_help` to `true` or `false`. Talk to the elder again and they remember: after a promise they thank you; after a refusal they skip the introduction and ask again. Save with **F5**, load with **F9**, and the flag comes back with the save. `SampleConversationTests` plays both choices through a save and load.

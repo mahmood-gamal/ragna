@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.cs" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/maps/TestMap.tscn" id="2_testmap"]
@@ -10,6 +10,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/Hud.tscn" id="8_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueScene.tscn" id="9_dialogue"]
 [ext_resource type="Script" path="res://scripts/ui/CombatFeedback.cs" id="10_feedback"]
+[ext_resource type="PackedScene" path="res://scenes/actors/Npc.tscn" id="11_npc"]
+[ext_resource type="PackedScene" path="res://scenes/triggers/StoryTrigger.tscn" id="12_trigger"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
@@ -42,6 +44,20 @@ MonsterScene = ExtResource("5_monster")
 MonsterId = "boar"
 Count = 2
 Radius = 3.0
+
+[node name="Npcs" type="Node3D" parent="."]
+
+[node name="Elder" parent="Npcs" instance=ExtResource("11_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 21)
+DialogueId = "elder_greeting"
+DisplayName = "Village Elder"
+Tint = Color(0.75, 0.8, 1, 1)
+
+[node name="StoryTriggers" type="Node3D" parent="."]
+
+[node name="VillageArrival" parent="StoryTriggers" instance=ExtResource("12_trigger")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 19)
+DialogueId = "village_arrival"
 
 [node name="CombatFeedback" type="Node3D" parent="." node_paths=PackedStringArray("Player")]
 script = ExtResource("10_feedback")

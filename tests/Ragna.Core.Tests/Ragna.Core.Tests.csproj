@@ -26,6 +26,7 @@
     <None Include="../../data/monsters/monsters.json" Link="data/monsters/monsters.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../data/items/items.json" Link="data/items/items.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../data/dialogue/*.json" LinkBase="data/dialogue" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../assets/portraits/**/*.png" LinkBase="assets/portraits" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../scripts/core/Ragna.Core.csproj" />

@@ -45,6 +45,8 @@ if (flags.Get("met_elder")) { /* ... */ }
 
 A flag never set reads as false. Names are case-sensitive.
 
+Story triggers that play once store `trigger.<dialogue id>` here, so they stay played after a load. See [NPCs and story triggers](dialogue.md#npcs-and-story-triggers).
+
 ## From code
 
 ```csharp

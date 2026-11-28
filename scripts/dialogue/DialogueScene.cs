@@ -71,9 +71,9 @@ public partial class DialogueScene : CanvasLayer
     [Export(PropertyHint.Range, "0,0.5,0.01,suffix:s")]
     public double SkipInterval { get; set; } = 0.06;
 
-    /// <summary>Size of a bust portrait.</summary>
+    /// <summary>Size of a bust portrait on screen. Portrait art is drawn at this size, see <see cref="PortraitArt"/>.</summary>
     [Export]
-    public Vector2 PortraitSize { get; set; } = new(300, 440);
+    public Vector2 PortraitSize { get; set; } = new(PortraitArt.Width, PortraitArt.Height);
 
     /// <summary>Script that <b>F8</b> plays, to try the scene out. Empty turns the key off.</summary>
     [Export]

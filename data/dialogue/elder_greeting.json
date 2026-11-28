@@ -1,0 +1,55 @@
+// The village elder. Talk to the elder NPC on the test map (left-click them).
+// Two characters, expression changes, and a choice that sets the promised_help flag,
+// which is saved with the game and changes what the elder says next time.
+{
+  "id": "elder_greeting",
+  "commands": [
+    { "cmd": "enter", "character": "elder", "slot": "right" },
+    { "cmd": "enter", "character": "hero", "slot": "left" },
+    { "cmd": "if_flag", "flag": "promised_help",
+      "then": [
+        { "cmd": "expression", "character": "elder", "expression": "happy" },
+        { "cmd": "say", "speaker": "elder", "text": "Thank you again for helping us. The slimes are just east of here." },
+        { "cmd": "expression", "character": "hero", "expression": "happy" },
+        { "cmd": "say", "speaker": "hero", "text": "I'm on it." },
+        { "cmd": "exit" },
+        { "cmd": "end" }
+      ]
+    },
+    { "cmd": "if_flag", "flag": "elder_asked",
+      "then": [
+        { "cmd": "say", "speaker": "elder", "text": "Back again? Have you thought about the slimes?" }
+      ],
+      "else": [
+        { "cmd": "say", "speaker": "elder", "text": "Ah, a traveller! It's been a while since anyone came down this road." },
+        { "cmd": "expression", "character": "elder", "expression": "sad" },
+        { "cmd": "say", "speaker": "elder", "text": "I'm afraid you've come at a bad time. Slimes have been eating our crops." },
+        { "cmd": "expression", "character": "hero", "expression": "surprised" },
+        { "cmd": "say", "speaker": "hero", "text": "Slimes? Here?" },
+        { "cmd": "expression", "character": "hero", "expression": "neutral" },
+        { "cmd": "say", "speaker": "elder", "text": "Would you help an old man and thin them out?" },
+        { "cmd": "set_flag", "flag": "elder_asked" }
+      ]
+    },
+    { "cmd": "choice", "options": [
+      { "text": "I'll deal with them.",
+        "then": [
+          { "cmd": "expression", "character": "elder", "expression": "happy" },
+          { "cmd": "say", "speaker": "elder", "text": "Bless you! They gather just east of here." },
+          { "cmd": "expression", "character": "hero", "expression": "happy" },
+          { "cmd": "say", "speaker": "hero", "text": "Leave it to me." },
+          { "cmd": "set_flag", "flag": "promised_help" }
+        ]
+      },
+      { "text": "Not right now.",
+        "then": [
+          { "cmd": "expression", "character": "elder", "expression": "sad" },
+          { "cmd": "say", "speaker": "elder", "text": "I see. Well, come back if you change your mind." },
+          { "cmd": "set_flag", "flag": "promised_help", "value": false }
+        ]
+      }
+    ]},
+    { "cmd": "say", "text": "The elder turns back to the fire." },
+    { "cmd": "exit" }
+  ]
+}
