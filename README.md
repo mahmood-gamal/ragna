@@ -37,7 +37,7 @@ dotnet test
 | `scripts/gameplay/` | Player, monsters, combat, items, saving (`SaveService` autoload) |
 | `scripts/ui/` | HUD, inventory and menu scripts |
 | `scripts/dialogue/` | Dialogue runner and scene UI |
-| `data/` | Data files (JSON dialogue, item and monster tables). `data/stats/stat_table.json` tunes stats, levels and EXP; `data/monsters/monsters.json` defines monster types and their drops; `data/items/items.json` defines item types |
+| `data/` | Data files (JSON dialogue, item and monster tables). `data/stats/stat_table.json` tunes stats, levels and EXP; `data/monsters/monsters.json` defines monster types and their drops; `data/items/items.json` defines item types; `data/dialogue/` holds dialogue scripts |
 | `assets/` | Art, audio, fonts |
 | `scenes/maps/` | Playable maps (`TestMap.tscn` is generated, see [docs/terrain.md](docs/terrain.md)) |
 | `assets/terrain/` | Terrain MeshLibrary, materials and textures |
@@ -46,7 +46,7 @@ dotnet test
 | `scenes/ui/` | UI windows (`InventoryWindow.tscn`) and the HUD (`Hud.tscn`) |
 | `scenes/actors/` | Characters (`Player.tscn`, `Monster.tscn`) and the character sprite with its blob shadow (`CharacterVisual.tscn`) |
 | `assets/characters/` | Character sprite sheets and `SpriteFrames` |
-| `docs/` | Guides, for example [terrain and GridMap painting](docs/terrain.md), the [game camera](docs/camera.md), [click-to-move and navmesh baking](docs/navigation.md) and [character sprites](docs/characters.md), [stats, levels and EXP](docs/stats.md), [combat](docs/combat.md), [monsters, AI and spawn points](docs/monsters.md), [item drops and pick-up](docs/items.md) the [inventory](docs/inventory.md), the [HUD](docs/hud.md) and [saving and loading](docs/save.md) |
+| `docs/` | Guides, for example [terrain and GridMap painting](docs/terrain.md), the [game camera](docs/camera.md), [click-to-move and navmesh baking](docs/navigation.md) and [character sprites](docs/characters.md), [stats, levels and EXP](docs/stats.md), [combat](docs/combat.md), [monsters, AI and spawn points](docs/monsters.md), [item drops and pick-up](docs/items.md) the [inventory](docs/inventory.md), the [HUD](docs/hud.md), [saving and loading](docs/save.md) and [dialogue scripts](docs/dialogue.md) |
 | `tests/` | xUnit test projects (excluded from the game assembly, ignored by Godot) |
 
 ## Controls
