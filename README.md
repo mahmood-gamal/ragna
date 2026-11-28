@@ -46,7 +46,7 @@ dotnet test
 | `scenes/ui/` | UI windows (`InventoryWindow.tscn`), the HUD (`Hud.tscn`) and the dialogue scene (`DialogueScene.tscn`) |
 | `scenes/actors/` | Characters (`Player.tscn`, `Monster.tscn`) and the character sprite with its blob shadow (`CharacterVisual.tscn`) |
 | `assets/characters/` | Character sprite sheets and `SpriteFrames` |
-| `docs/` | Guides, for example [terrain and GridMap painting](docs/terrain.md), the [game camera](docs/camera.md), [click-to-move and navmesh baking](docs/navigation.md) and [character sprites](docs/characters.md), [stats, levels and EXP](docs/stats.md), [combat](docs/combat.md), [monsters, AI and spawn points](docs/monsters.md), [item drops and pick-up](docs/items.md) the [inventory](docs/inventory.md), the [HUD](docs/hud.md), [saving and loading](docs/save.md) and [dialogue scripts](docs/dialogue.md) |
+| `docs/` | Guides, for example [terrain and GridMap painting](docs/terrain.md), the [game camera](docs/camera.md), [click-to-move and navmesh baking](docs/navigation.md) and [character sprites](docs/characters.md), [stats, levels and EXP](docs/stats.md), [combat, damage numbers and the target HP bar](docs/combat.md), [monsters, AI and spawn points](docs/monsters.md), [item drops and pick-up](docs/items.md) the [inventory](docs/inventory.md), the [HUD](docs/hud.md), [saving and loading](docs/save.md) and [dialogue scripts](docs/dialogue.md) |
 | `tests/` | xUnit test projects (excluded from the game assembly, ignored by Godot) |
 
 ## Controls
