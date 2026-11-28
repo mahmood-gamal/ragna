@@ -23,7 +23,7 @@ The rules live in `Ragna.Core.Monsters` (`scripts/core/Monsters/`), with no Godo
 | Chase | Runs at `chaseSpeed` towards the player | In `attackRange` (→ Attack), or leash (→ Return) |
 | Attack | Stands, faces the player and attacks every `attackDelay` | Player steps out of range (→ Chase), or leash (→ Return) |
 | Return | Walks home at `moveSpeed`, ignoring the player | It gets home (→ Idle, HP refilled if `healOnReturn`) |
-| Dead | Nothing | The body fades out; the spawner brings a new one |
+| Dead | Nothing. Its drops fall on the ground ([items](items.md)) | The body fades out; the spawner brings a new one |
 
 **Aggro.** An aggressive monster (`aggressive: true`) attacks a living player within `aggroRadius`. Every monster, aggressive or not, fights back when the player hits it.
 
@@ -51,6 +51,7 @@ Distances are measured on the ground, so height doesn't count. The attack timer 
 | `behavior.idleTimeMin`, `behavior.idleTimeMax`, `behavior.wanderTimeout` | Wander timing |
 | `behavior.arriveDistance` | How close counts as arrived |
 | `behavior.healOnReturn` | Refill HP on getting home after a leash (default `true`) |
+| `drops` | What it can drop on death: a list of `{ "item", "chance", "min", "max" }`. See [items](items.md) |
 
 The game ships two types:
 

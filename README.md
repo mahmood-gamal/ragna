@@ -37,14 +37,15 @@ dotnet test
 | `scripts/gameplay/` | Player, monsters, combat, items |
 | `scripts/ui/` | HUD, inventory and menu scripts |
 | `scripts/dialogue/` | Dialogue runner and scene UI |
-| `data/` | Data files (JSON dialogue, item and monster tables). `data/stats/stat_table.json` tunes stats, levels and EXP; `data/monsters/monsters.json` defines monster types |
+| `data/` | Data files (JSON dialogue, item and monster tables). `data/stats/stat_table.json` tunes stats, levels and EXP; `data/monsters/monsters.json` defines monster types and their drops; `data/items/items.json` defines item types |
 | `assets/` | Art, audio, fonts |
 | `scenes/maps/` | Playable maps (`TestMap.tscn` is generated, see [docs/terrain.md](docs/terrain.md)) |
 | `assets/terrain/` | Terrain MeshLibrary, materials and textures |
 | `tools/` | Asset build scripts (`tools/build_terrain.sh`, `tools/characters/make_placeholder_sprites.py`) |
+| `scenes/items/` | Items on the ground (`GroundItem.tscn`) |
 | `scenes/actors/` | Characters (`Player.tscn`, `Monster.tscn`) and the character sprite with its blob shadow (`CharacterVisual.tscn`) |
 | `assets/characters/` | Character sprite sheets and `SpriteFrames` |
-| `docs/` | Guides, for example [terrain and GridMap painting](docs/terrain.md), the [game camera](docs/camera.md), [click-to-move and navmesh baking](docs/navigation.md) and [character sprites](docs/characters.md), [stats, levels and EXP](docs/stats.md), [combat](docs/combat.md) and [monsters, AI and spawn points](docs/monsters.md) |
+| `docs/` | Guides, for example [terrain and GridMap painting](docs/terrain.md), the [game camera](docs/camera.md), [click-to-move and navmesh baking](docs/navigation.md) and [character sprites](docs/characters.md), [stats, levels and EXP](docs/stats.md), [combat](docs/combat.md), [monsters, AI and spawn points](docs/monsters.md) and [item drops and pick-up](docs/items.md) |
 | `tests/` | xUnit test projects (excluded from the game assembly, ignored by Godot) |
 
 ## Controls
@@ -53,10 +54,11 @@ dotnet test
 | --- | --- |
 | Left mouse button | Walk to the clicked ground; hold it to keep walking towards the cursor |
 | Left-click a monster | Walk into range and attack it until it dies (click the ground to stop) |
+| Left-click an item on the ground | Walk to it and pick it up |
 | **Q** / **E** | Turn the camera 45° around the player |
 | Mouse wheel | Zoom in and out |
 
-See [docs/navigation.md](docs/navigation.md), [docs/camera.md](docs/camera.md), [docs/combat.md](docs/combat.md) and [docs/monsters.md](docs/monsters.md).
+See [docs/navigation.md](docs/navigation.md), [docs/camera.md](docs/camera.md), [docs/combat.md](docs/combat.md), [docs/monsters.md](docs/monsters.md) and [docs/items.md](docs/items.md).
 
 ## C# conventions
 

@@ -1,0 +1,35 @@
+{
+  // Item types. See docs/items.md. Monsters name these ids in their "drops" (data/monsters/monsters.json).
+  "items": [
+    {
+      "id": "slime_gel",
+      "name": "Slime Gel",
+      "description": "A sticky blob of green gel. It wobbles.",
+      "tint": "#7dff7a"
+    },
+    {
+      "id": "green_herb",
+      "name": "Green Herb",
+      "description": "A bitter leaf that soothes small wounds.",
+      "tint": "#2fae3a"
+    },
+    {
+      "id": "boar_tusk",
+      "name": "Boar Tusk",
+      "description": "A curved tusk, still sharp.",
+      "tint": "#f2ead0"
+    },
+    {
+      "id": "boar_hide",
+      "name": "Boar Hide",
+      "description": "Coarse, bristly hide. Tanners pay for it.",
+      "tint": "#8a5a3c"
+    },
+    {
+      "id": "raw_meat",
+      "name": "Raw Meat",
+      "description": "A fresh cut. Best cooked.",
+      "tint": "#d9534f"
+    }
+  ]
+}

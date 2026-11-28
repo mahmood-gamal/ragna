@@ -1,4 +1,5 @@
 using Ragna.Core.Combat;
+using Ragna.Core.Items;
 
 namespace Ragna.Core.Monsters;
 
@@ -48,6 +49,9 @@ public sealed record MonsterDefinition
     /// <summary>AI tuning: aggro, wander and leash.</summary>
     public MonsterBehavior Behavior { get; init; } = new();
 
+    /// <summary>What it can drop when it dies. Each entry is rolled on its own (see <see cref="DropTable"/>).</summary>
+    public IReadOnlyList<DropEntry> Drops { get; init; } = [];
+
     public CombatStats CombatStats => new(Level, Atk, Def, Hit, Flee, CritChance: 0);
 
     /// <summary>Throws <see cref="InvalidDataException"/> if any value is out of range.</summary>
@@ -63,9 +67,14 @@ public sealed record MonsterDefinition
         Require(RespawnTime >= 0, "respawnTime can't be negative.");
         Require(TryParseTint(Tint, out _, out _, out _), "tint must look like #rrggbb.");
         var behavior = Behavior ?? throw new InvalidDataException($"Monster '{Id}': behavior can't be null.");
+        var drops = Drops ?? throw new InvalidDataException($"Monster '{Id}': drops can't be null.");
         try
         {
             behavior.Validate();
+            foreach (var drop in drops)
+            {
+                (drop ?? throw new ArgumentException("drops can't contain null.")).Validate();
+            }
         }
         catch (ArgumentException e)
         {
