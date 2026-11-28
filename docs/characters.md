@@ -48,7 +48,7 @@ For each animation, the sprite looks for a directional version in its `SpriteFra
 
 When the direction changes in the middle of an animation, the sprite keeps the current frame, so a walk cycle or an attack does not restart.
 
-The placeholder art only has the plain `idle`, `walk` and `attack`, so it looks the same from every side.
+The placeholder art has all eight directions for every animation, so you can see the facing change in game. Each placeholder frame has its direction (`S`, `SW`, ...) written in the top-left corner.
 
 ## Sprite settings
 
@@ -81,10 +81,53 @@ The sprite's `SpriteFrames` must have these three animations:
 
 `attack` must not loop: the sprite goes back to idle or walk when it ends.
 
-The placeholder art is `assets/characters/placeholder/`: a sprite sheet with 64×96 px frames, one row per animation, feet on the bottom pixel row, and `placeholder_frames.tres`, the `SpriteFrames` cut from it. Regenerate both with:
+Every animation also has eight directional versions, `idle_s` to `attack_se`. The plain names are the fallback for art without directions; see [Directional animations](#directional-animations).
+
+## Sprite sheet layout
+
+Follow this layout for all character art, so real sheets drop in without code changes. The rules are `Ragna.Core.Characters.SpriteSheetLayout` (`scripts/core/Characters/SpriteSheetLayout.cs`), tested in `tests/Ragna.Core.Tests/Characters/SpriteSheetLayoutTests.cs`.
+
+| Rule | Value |
+| --- | --- |
+| Files | One PNG per animation: `<character>_<animation>.png`, for example `novice_walk.png` |
+| Folder | `assets/characters/<character>/`, with the `SpriteFrames` as `<character>_frames.tres` |
+| Frame size | 64 × 96 px, no padding or gaps between frames |
+| Columns | One per frame, left to right in play order. Frame `i` starts at x = 64 × `i` |
+| Rows | One per direction, in this order: `s`, `sw`, `w`, `nw`, `n`, `ne`, `e`, `se` (south first, then clockwise). Row `r` starts at y = 96 × `r` |
+| Sheet size | (64 × frame count) × 768 px. Idle and attack are 256 × 768, walk is 384 × 768 |
+| Anchor | Feet on the bottom pixel row (y = 95), centred (x = 32). The sprite node sits half a frame above the ground, so this anchor lands on the ground |
+| Background | Transparent. Pixels are either opaque or fully clear: the sprite uses alpha cut |
+| Animation names | `<animation>_<direction>`, for example `walk_se`, plus the plain `idle`, `walk` and `attack` |
+
+The direction rows are the [8-direction facing](#8-direction-facing) rows: south faces the camera, west walks to the screen's left, north faces away.
+
+### Five-direction art
+
+Art with only the left-facing side can leave out `ne`, `e` and `se`. The sprite then draws `nw`, `w` and `sw` flipped. Leave those animations out of the `SpriteFrames` too; an empty row in the sheet is fine.
+
+### Placeholder sheets
+
+The placeholder is `assets/characters/placeholder/`:
+
+| File | Contents |
+| --- | --- |
+| `placeholder_idle.png` | 4 frames × 8 directions, 4 fps, loops |
+| `placeholder_walk.png` | 6 frames × 8 directions, 10 fps, loops |
+| `placeholder_attack.png` | 4 frames × 8 directions, 10 fps, plays once |
+| `placeholder_frames.tres` | The `SpriteFrames`: 24 directional animations, and the plain `idle`, `walk` and `attack` (the south row) |
+
+![The placeholder walk sheet: six frames, eight directions](../assets/characters/placeholder/placeholder_walk.png)
+
+The east-facing rows are the west-facing rows mirrored. Regenerate everything, including the `.import` files, with:
 
 ```sh
 python3 tools/characters/make_placeholder_sprites.py   # needs Pillow
 ```
 
-To use real art, make a new `SpriteFrames` with the same three animation names and set it as **Sprite Frames** on the `Sprite` node. Keep the feet on the bottom row of each frame, or move `Sprite` up or down to match.
+### Swapping in real art
+
+1. Draw the sheets to the layout above and put them in `assets/characters/<character>/`.
+2. Make a `SpriteFrames` named `<character>_frames.tres`. For each sheet, add the eight `<animation>_<direction>` animations, cutting each row into 64 × 96 frames (in the SpriteFrames editor, **Add frames from sprite sheet** with 8 vertical and N horizontal cells). Copy speed and looping from the placeholder.
+3. Set it as **Sprite Frames** on the `Sprite` node in `CharacterVisual.tscn`, or on a copy of that scene for another character.
+
+A different frame size works if every sheet of the character uses it. Then change **Pixel Size** so the frame height matches the character's height in metres, and set the `Sprite` node's Y to half that height.
