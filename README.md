@@ -42,9 +42,9 @@ dotnet test
 | `scenes/maps/` | Playable maps (`TestMap.tscn` is generated, see [docs/terrain.md](docs/terrain.md)) |
 | `assets/terrain/` | Terrain MeshLibrary, materials and textures |
 | `tools/` | Asset build scripts (`tools/build_terrain.sh`, `tools/characters/make_placeholder_sprites.py`) |
-| `scenes/actors/` | Characters (`Player.tscn`) and the character sprite with its blob shadow (`CharacterVisual.tscn`) |
+| `scenes/actors/` | Characters (`Player.tscn`, `Monster.tscn`) and the character sprite with its blob shadow (`CharacterVisual.tscn`) |
 | `assets/characters/` | Character sprite sheets and `SpriteFrames` |
-| `docs/` | Guides, for example [terrain and GridMap painting](docs/terrain.md), the [game camera](docs/camera.md), [click-to-move and navmesh baking](docs/navigation.md) and [character sprites](docs/characters.md) and [stats, levels and EXP](docs/stats.md) |
+| `docs/` | Guides, for example [terrain and GridMap painting](docs/terrain.md), the [game camera](docs/camera.md), [click-to-move and navmesh baking](docs/navigation.md) and [character sprites](docs/characters.md), [stats, levels and EXP](docs/stats.md) and [combat](docs/combat.md) |
 | `tests/` | xUnit test projects (excluded from the game assembly, ignored by Godot) |
 
 ## Controls
@@ -52,10 +52,11 @@ dotnet test
 | Input | Action |
 | --- | --- |
 | Left mouse button | Walk to the clicked ground; hold it to keep walking towards the cursor |
+| Left-click a monster | Walk into range and attack it until it dies (click the ground to stop) |
 | **Q** / **E** | Turn the camera 45° around the player |
 | Mouse wheel | Zoom in and out |
 
-See [docs/navigation.md](docs/navigation.md) and [docs/camera.md](docs/camera.md).
+See [docs/navigation.md](docs/navigation.md), [docs/camera.md](docs/camera.md) and [docs/combat.md](docs/combat.md).
 
 ## C# conventions
 

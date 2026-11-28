@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.cs" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/maps/TestMap.tscn" id="2_testmap"]
 [ext_resource type="Script" path="res://scripts/gameplay/Camera/GameCamera.cs" id="3_camera"]
 [ext_resource type="PackedScene" path="res://scenes/actors/Player.tscn" id="4_player"]
+[ext_resource type="PackedScene" path="res://scenes/actors/Monster.tscn" id="5_monster"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
@@ -18,3 +19,24 @@ Camera = NodePath("../GameCamera")
 fov = 50.0
 script = ExtResource("3_camera")
 Target = NodePath("../Player")
+
+[node name="Monsters" type="Node3D" parent="."]
+
+[node name="Slime" parent="Monsters" instance=ExtResource("5_monster")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 27)
+DisplayName = "Slime"
+MaxHp = 60
+Def = 2
+Flee = 5
+ExpReward = 30
+Tint = Color(0.55, 1, 0.55, 1)
+
+[node name="Boar" parent="Monsters" instance=ExtResource("5_monster")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 0, 22)
+DisplayName = "Boar"
+Level = 4
+MaxHp = 140
+Def = 6
+Flee = 12
+ExpReward = 80
+Tint = Color(1, 0.6, 0.45, 1)
