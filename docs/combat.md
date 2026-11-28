@@ -9,7 +9,8 @@ The rules live in `Ragna.Core.Combat` (`scripts/core/Combat/`), with no Godot de
 | `AutoAttack` | core | Each frame says whether to chase (and when to ask for a new path), wait, or attack now |
 | `DamageCalculator` | core | Rolls crit, hit and damage for one attack |
 | `CombatStats` | core | ATK, DEF, HIT, FLEE, CRIT. `CombatStats.FromCharacter` builds them from `CharacterStats` |
-| `Health` | core | HP with `Damaged` and `Died` events |
+| `Health` | core | HP with `Damaged`, `Died` and `Changed` events |
+| `SpPool` | core | The player's SP, shown on the [HUD](hud.md) |
 | `PlayerCombat` | `scripts/gameplay/Combat/` | Child of the player. Picks monsters under the cursor, drives the mover and the sprite |
 | `Monster` | `scripts/gameplay/Combat/`, `scenes/actors/Monster.tscn` | A target with stats and HP from `data/monsters/monsters.json`. Flashes when hit, fades out and frees itself on death. AI and respawn: see [monsters](monsters.md) |
 

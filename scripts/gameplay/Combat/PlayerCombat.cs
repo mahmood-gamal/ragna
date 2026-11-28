@@ -103,6 +103,9 @@ public partial class PlayerCombat : Node
     /// <summary>The player's HP. Max HP follows <see cref="Stats"/>.</summary>
     public Health Health { get; private set; } = new(1);
 
+    /// <summary>The player's SP. Max SP follows <see cref="Stats"/>. Skills will spend it.</summary>
+    public SpPool Sp { get; private set; } = new(0);
+
     public bool IsDead => Health.IsDead;
 
     /// <summary>The player's body, for its position.</summary>
@@ -118,7 +121,12 @@ public partial class PlayerCombat : Node
         var table = LoadStatTable();
         Stats = new CharacterStats(table, 1, 0, new BaseStats(Str, Agi, Vit, Int, Dex, Luk), statPoints: 0);
         Health = new Health(Stats.Derived.MaxHp);
-        Stats.Changed += () => Health.SetMax(Stats.Derived.MaxHp);
+        Sp = new SpPool(Stats.Derived.MaxSp);
+        Stats.Changed += () =>
+        {
+            Health.SetMax(Stats.Derived.MaxHp);
+            Sp.SetMax(Stats.Derived.MaxSp);
+        };
         AddToGroup(Group);
     }
 
@@ -180,6 +188,7 @@ public partial class PlayerCombat : Node
             if (_reviveIn <= 0)
             {
                 Health.Revive();
+                Sp.Refill();
                 Revived?.Invoke();
             }
 
@@ -265,9 +274,10 @@ public partial class PlayerCombat : Node
 
         if (target.IsDead)
         {
+            // Killed first, so the log reads "defeated, +EXP" before any "level up".
             var exp = target.ExpReward;
-            Stats.AddExp(exp);
             Killed?.Invoke(target, exp);
+            Stats.AddExp(exp);
             GD.Print($"{target.DisplayName} defeated. +{exp} EXP (level {Stats.Level}, {Stats.Exp}/{Stats.ExpToNextLevel}).");
         }
     }

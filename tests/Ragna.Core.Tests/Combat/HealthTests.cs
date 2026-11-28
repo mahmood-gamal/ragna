@@ -87,4 +87,33 @@ public sealed class HealthTests
         Assert.False(health.IsDead);
         Assert.Equal(50, health.Current);
     }
+
+    [Fact]
+    public void Changed_is_raised_for_every_change_to_hp_or_max()
+    {
+        var health = new Health(50);
+        var changes = 0;
+        health.Changed += () => changes++;
+
+        health.TakeDamage(10);
+        health.Heal(5);
+        health.SetMax(60);
+        health.TakeDamage(100);
+        health.Revive();
+
+        Assert.Equal(5, changes);
+    }
+
+    [Fact]
+    public void Changed_is_not_raised_when_nothing_changes()
+    {
+        var health = new Health(50);
+        var changes = 0;
+        health.Changed += () => changes++;
+
+        health.TakeDamage(0);
+        health.Heal(10);
+
+        Assert.Equal(0, changes);
+    }
 }

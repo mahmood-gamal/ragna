@@ -158,4 +158,18 @@ public sealed class CharacterStatsTests
         Assert.Throws<ArgumentOutOfRangeException>(() => new CharacterStats(Table, 1, 0, BaseStats.All(0), 0));
         Assert.Throws<ArgumentOutOfRangeException>(() => new CharacterStats(Table, 1, 0, BaseStats.All(100), 0));
     }
+
+    [Fact]
+    public void Exp_changed_is_raised_when_exp_is_added()
+    {
+        var stats = new CharacterStats(Table);
+        var changes = 0;
+        stats.ExpChanged += () => changes++;
+
+        stats.AddExp(1);
+        stats.AddExp(0);
+        stats.AddExp(stats.ExpToNextLevel);
+
+        Assert.Equal(2, changes);
+    }
 }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.cs" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/maps/TestMap.tscn" id="2_testmap"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/actors/Monster.tscn" id="5_monster"]
 [ext_resource type="Script" path="res://scripts/gameplay/Monsters/MonsterSpawner.cs" id="6_spawner"]
 [ext_resource type="PackedScene" path="res://scenes/ui/InventoryWindow.tscn" id="7_inventory_window"]
+[ext_resource type="PackedScene" path="res://scenes/ui/Hud.tscn" id="8_hud"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
@@ -41,6 +42,10 @@ Count = 2
 Radius = 3.0
 
 [node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Hud" parent="UI" node_paths=PackedStringArray("Player", "Pickup") instance=ExtResource("8_hud")]
+Player = NodePath("../../Player/Combat")
+Pickup = NodePath("../../Player/Pickup")
 
 [node name="InventoryWindow" parent="UI" node_paths=PackedStringArray("Source") instance=ExtResource("7_inventory_window")]
 Source = NodePath("../../Player/Inventory")
