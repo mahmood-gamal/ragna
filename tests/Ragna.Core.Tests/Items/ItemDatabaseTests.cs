@@ -23,6 +23,14 @@ public sealed class ItemDatabaseTests
     }
 
     [Fact]
+    public void Reads_max_stack()
+    {
+        var item = ItemDatabase.FromJson("""{ "items": [ { "id": "tusk", "maxStack": 1 } ] }""").Get("tusk");
+
+        Assert.Equal(1, item.MaxStack);
+    }
+
+    [Fact]
     public void Lookup_ignores_case()
     {
         var items = ItemDatabase.FromJson("""{ "items": [ { "id": "gel", "name": "Gel" } ] }""");
@@ -38,12 +46,14 @@ public sealed class ItemDatabaseTests
 
         Assert.Equal("#ffffff", item.Tint);
         Assert.Equal("", item.Description);
+        Assert.Equal(ItemDefinition.DefaultMaxStack, item.MaxStack);
     }
 
     [Theory]
     [InlineData("""{ "items": [ { "id": "" } ] }""")]
     [InlineData("""{ "items": [ { "id": "a", "tint": "green" } ] }""")]
     [InlineData("""{ "items": [ { "id": "a" }, { "id": "A" } ] }""")]
+    [InlineData("""{ "items": [ { "id": "a", "maxStack": 0 } ] }""")]
     [InlineData("""{ }""")]
     [InlineData("""{ "items": [ """)]
     public void Rejects_bad_data(string json)

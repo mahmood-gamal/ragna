@@ -23,8 +23,9 @@ The rules live in `Ragna.Core.Items` (`scripts/core/Items/`), with no Godot depe
 | --- | --- |
 | `id` | Key used by drop tables, for example `slime_gel`. Must be unique |
 | `name` | Name shown to the player |
-| `description` | One line for tooltips (used by the inventory later) |
-| `tint` | Colour of the placeholder ground sprite, `#rrggbb` |
+| `description` | One line for tooltips in the inventory |
+| `tint` | Colour of the placeholder ground sprite (and the inventory slot), `#rrggbb` |
+| `maxStack` | Most of this item one inventory slot holds. Default 99. 1 means it doesn't stack |
 
 ## Drop tables
 
@@ -66,4 +67,4 @@ Left-click an item: the player walks to it and picks it up once within `Reach` (
 
 Terrain and monsters in front of an item block the click. The `Pickup` node comes after `Combat` under the player, so it sees clicks first.
 
-`PlayerPickup.PickedUp(item, quantity)` fires on each pick-up. For now it only logs `Picked up Slime Gel.`, and the item is gone; the grid inventory (GAM-14) will keep it.
+Picked-up items go into the player's inventory (see [inventory.md](inventory.md)). If the stack doesn't fit, the item stays on the ground. `PlayerPickup.PickedUp(item, quantity)` fires after each pick-up.
