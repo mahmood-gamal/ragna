@@ -1,0 +1,18 @@
+// Plays once when the player first walks onto the dirt path on the test map (a story trigger).
+{
+  "id": "village_arrival",
+  "commands": [
+    { "cmd": "say", "text": "The path opens onto a quiet village. Smoke rises from a fire nearby." },
+    { "cmd": "enter", "character": "hero", "slot": "left" },
+    { "cmd": "if_flag", "flag": "elder_asked",
+      "then": [
+        { "cmd": "say", "speaker": "hero", "text": "This must be the village the elder spoke of." }
+      ],
+      "else": [
+        { "cmd": "expression", "character": "hero", "expression": "surprised" },
+        { "cmd": "say", "speaker": "hero", "text": "Someone's by the fire. Maybe they know this place." }
+      ]
+    },
+    { "cmd": "exit" }
+  ]
+}

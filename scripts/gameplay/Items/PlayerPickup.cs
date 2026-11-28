@@ -142,7 +142,8 @@ public partial class PlayerPickup : Node
         GD.Print($"Picked up {item.Caption}.");
     }
 
-    private void Cancel()
+    /// <summary>Drops the walk to an item, if any, for example when an NPC is clicked.</summary>
+    public void Cancel()
     {
         _order.Cancel();
         _target = null;
