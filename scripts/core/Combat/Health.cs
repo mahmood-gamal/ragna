@@ -16,6 +16,9 @@ public sealed class Health
     /// <summary>Raised once, when HP reaches 0.</summary>
     public event Action? Died;
 
+    /// <summary>Raised whenever <see cref="Current"/> or <see cref="Max"/> changes, for HP bars.</summary>
+    public event Action? Changed;
+
     public int Max { get; private set; }
 
     public int Current { get; private set; }
@@ -36,6 +39,7 @@ public sealed class Health
 
         var lost = Math.Min(amount, Current);
         Current -= lost;
+        Changed?.Invoke();
         Damaged?.Invoke(lost);
         if (IsDead)
         {
@@ -56,6 +60,11 @@ public sealed class Health
 
         var gained = Math.Min(amount, Max - Current);
         Current += gained;
+        if (gained > 0)
+        {
+            Changed?.Invoke();
+        }
+
         return gained;
     }
 
@@ -66,14 +75,20 @@ public sealed class Health
         if (IsDead)
         {
             Max = max;
+            Changed?.Invoke();
             return;
         }
 
         var missing = Max - Current;
         Max = max;
         Current = Math.Clamp(max - missing, 1, max);
+        Changed?.Invoke();
     }
 
     /// <summary>Back to full HP, for example on respawn.</summary>
-    public void Revive() => Current = Max;
+    public void Revive()
+    {
+        Current = Max;
+        Changed?.Invoke();
+    }
 }

@@ -43,10 +43,10 @@ dotnet test
 | `assets/terrain/` | Terrain MeshLibrary, materials and textures |
 | `tools/` | Asset build scripts (`tools/build_terrain.sh`, `tools/characters/make_placeholder_sprites.py`) |
 | `scenes/items/` | Items on the ground (`GroundItem.tscn`) |
-| `scenes/ui/` | UI windows (`InventoryWindow.tscn`) |
+| `scenes/ui/` | UI windows (`InventoryWindow.tscn`) and the HUD (`Hud.tscn`) |
 | `scenes/actors/` | Characters (`Player.tscn`, `Monster.tscn`) and the character sprite with its blob shadow (`CharacterVisual.tscn`) |
 | `assets/characters/` | Character sprite sheets and `SpriteFrames` |
-| `docs/` | Guides, for example [terrain and GridMap painting](docs/terrain.md), the [game camera](docs/camera.md), [click-to-move and navmesh baking](docs/navigation.md) and [character sprites](docs/characters.md), [stats, levels and EXP](docs/stats.md), [combat](docs/combat.md), [monsters, AI and spawn points](docs/monsters.md), [item drops and pick-up](docs/items.md) and the [inventory](docs/inventory.md) |
+| `docs/` | Guides, for example [terrain and GridMap painting](docs/terrain.md), the [game camera](docs/camera.md), [click-to-move and navmesh baking](docs/navigation.md) and [character sprites](docs/characters.md), [stats, levels and EXP](docs/stats.md), [combat](docs/combat.md), [monsters, AI and spawn points](docs/monsters.md), [item drops and pick-up](docs/items.md) the [inventory](docs/inventory.md) and the [HUD](docs/hud.md) |
 | `tests/` | xUnit test projects (excluded from the game assembly, ignored by Godot) |
 
 ## Controls
@@ -60,7 +60,7 @@ dotnet test
 | **Q** / **E** | Turn the camera 45° around the player |
 | Mouse wheel | Zoom in and out |
 
-See [docs/navigation.md](docs/navigation.md), [docs/camera.md](docs/camera.md), [docs/combat.md](docs/combat.md), [docs/monsters.md](docs/monsters.md), [docs/items.md](docs/items.md) and [docs/inventory.md](docs/inventory.md).
+See [docs/navigation.md](docs/navigation.md), [docs/camera.md](docs/camera.md), [docs/combat.md](docs/combat.md), [docs/monsters.md](docs/monsters.md), [docs/items.md](docs/items.md), [docs/inventory.md](docs/inventory.md) and [docs/hud.md](docs/hud.md).
 
 ## C# conventions
 

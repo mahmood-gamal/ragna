@@ -42,6 +42,9 @@ public sealed class CharacterStats
     /// <summary>Raised after one or more level-ups, with the new level.</summary>
     public event Action<int>? LevelledUp;
 
+    /// <summary>Raised after <see cref="AddExp"/> changes <see cref="Exp"/> or <see cref="Level"/>, for EXP bars.</summary>
+    public event Action? ExpChanged;
+
     /// <summary>Raised whenever <see cref="Derived"/> may have changed.</summary>
     public event Action? Changed;
 
@@ -129,6 +132,7 @@ public sealed class CharacterStats
             LevelledUp?.Invoke(Level);
         }
 
+        ExpChanged?.Invoke();
         return gained;
     }
 
