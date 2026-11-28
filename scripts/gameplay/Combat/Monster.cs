@@ -2,6 +2,7 @@ using Godot;
 using Ragna.Core.Combat;
 using Ragna.Core.Monsters;
 using Ragna.Gameplay.Characters;
+using Ragna.Gameplay.Items;
 using Ragna.Gameplay.Monsters;
 using NVector3 = System.Numerics.Vector3;
 
@@ -49,6 +50,10 @@ public partial class Monster : CharacterBody3D
     /// <summary>Seconds the body stays on screen after dying.</summary>
     [Export(PropertyHint.Range, "0,10,0.1,suffix:s")]
     public float CorpseTime { get; set; } = 0.6f;
+
+    /// <summary>Scene for the items it drops on death. Defaults to <c>scenes/items/GroundItem.tscn</c>.</summary>
+    [Export]
+    public PackedScene? GroundItemScene { get; set; }
 
     /// <summary>Physics layers the ground probe can hit. Layer 1 is the terrain.</summary>
     [Export(PropertyHint.Layers3DPhysics)]
@@ -269,6 +274,7 @@ public partial class Monster : CharacterBody3D
         StopMoving();
         _brain?.Die();
         Died?.Invoke(this, killer);
+        DropLoot();
 
         var tween = CreateTween();
         if (_sprite is not null)
@@ -281,6 +287,15 @@ public partial class Monster : CharacterBody3D
         }
 
         tween.TweenCallback(Callable.From(QueueFree));
+    }
+
+    private void DropLoot()
+    {
+        // Next to the monster, not under it, so the items stay after the body is freed.
+        if (GetParent() is Node3D parent)
+        {
+            LootDropper.Drop(Definition, parent, GlobalPosition, GroundItemScene);
+        }
     }
 
     private void Flash()

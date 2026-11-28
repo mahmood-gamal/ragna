@@ -51,3 +51,4 @@ move={
 3d_physics/layer_1="terrain"
 3d_physics/layer_2="player"
 3d_physics/layer_3="monsters"
+3d_physics/layer_4="items"
