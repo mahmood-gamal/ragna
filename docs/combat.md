@@ -67,7 +67,42 @@ Monsters are on layer 3 (`monsters`). The click ray in `PlayerCombat` hits layer
 - `Monster.Attacked(result, attacker)`, `Died(monster, killer)`, `Health.Damaged`
 - `PlayerCombat.Attacked(result, monster)`, `Died(monster)`, `Revived`, `PlayerCombat.Health.Damaged`
 
-Damage numbers and HP bars (GAM-12) and the HUD log (GAM-15) can hook these.
+Damage numbers and the target HP bar (below) and the [HUD](hud.md) log hook these.
+
+## Damage numbers and target HP bar
+
+![Damage numbers and target HP bar](images/combat-feedback.png)
+
+- **Damage numbers** pop up over whoever is hit, rise, drift to one side and fade out in about 0.9 s. Quick hits alternate sides so they don't stack.
+- **Target HP bar**: a small bar floats over the monster the player is attacking. It empties from the left and turns red below 25% HP. It hides when the monster dies, and goes away when the player stops attacking or picks another target.
+
+| Number | Colour |
+| --- | --- |
+| Damage the player deals | White |
+| Critical hit by the player | Yellow, 1.5× size |
+| Damage the player takes | Red (1.5× size on a critical) |
+| Miss, either way | Light blue, `Miss` |
+
+Both are driven by events only, nothing is polled:
+
+| Event | Does |
+| --- | --- |
+| `PlayerCombat.AttackMade` | Number over the target |
+| `PlayerCombat.Attacked` | Number over the player |
+| `PlayerCombat.TargetChanged` | Moves the HP bar to the new target, or removes it |
+| `Health.Changed` (target) | Redraws the HP bar |
+| `Health.Died` (target) | Hides the HP bar |
+
+| Piece | Where | What it does |
+| --- | --- | --- |
+| `DamagePopup` | core (`scripts/core/Hud/`) | Text, style and size of a number for an `AttackResult` |
+| `FloatingNumberMotion` | core | The rise, drift, pop and fade over time |
+| `WorldBarFill` | core | Width and offset of the HP bar's fill |
+| `CombatFeedback` | `scripts/ui/`, `CombatFeedback` node in `Main.tscn` | Listens to `Player/Combat` and spawns numbers and the bar. Exports `NumberHeight`, `BarHeight` and `ShowDamageTaken` |
+| `DamageNumber` | `scripts/ui/` | One billboarded `Label3D`. Frees itself when done |
+| `TargetHpBar` | `scripts/ui/` | Two billboarded quads, added as a child of the target so it follows it |
+
+Numbers and the bar draw on top of the world (no depth test) and sit on render layer 2, like the character sprites, so blob shadows don't paint on them. The core pieces are tested in `tests/Ragna.Core.Tests/Hud/`.
 
 ## Test map
 
