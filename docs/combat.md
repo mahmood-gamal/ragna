@@ -11,7 +11,7 @@ The rules live in `Ragna.Core.Combat` (`scripts/core/Combat/`), with no Godot de
 | `CombatStats` | core | ATK, DEF, HIT, FLEE, CRIT. `CombatStats.FromCharacter` builds them from `CharacterStats` |
 | `Health` | core | HP with `Damaged` and `Died` events |
 | `PlayerCombat` | `scripts/gameplay/Combat/` | Child of the player. Picks monsters under the cursor, drives the mover and the sprite |
-| `Monster` | `scripts/gameplay/Combat/`, `scenes/actors/Monster.tscn` | A target with stats and HP. Flashes when hit, fades out and frees itself on death. AI and respawn come with GAM-11 |
+| `Monster` | `scripts/gameplay/Combat/`, `scenes/actors/Monster.tscn` | A target with stats and HP from `data/monsters/monsters.json`. Flashes when hit, fades out and frees itself on death. AI and respawn: see [monsters](monsters.md) |
 
 ## Attack speed
 
@@ -29,7 +29,7 @@ Combat stats from base stats (players):
 | FLEE | `level + AGI` |
 | CRIT | `1 + LUK × 0.3` % |
 
-Monsters set ATK, DEF, HIT and FLEE directly in the inspector.
+Monsters get ATK, DEF, HIT and FLEE from `data/monsters/monsters.json` (see [monsters](monsters.md)). Monster attacks on the player use the same formula, with the player's DEF and FLEE.
 
 One attack:
 
@@ -64,9 +64,10 @@ Monsters are on layer 3 (`monsters`). The click ray in `PlayerCombat` hits layer
 
 - `PlayerCombat.AttackMade(result, monster)`, `Killed(monster, exp)`, `TargetChanged(monster?)`
 - `Monster.Attacked(result, attacker)`, `Died(monster, killer)`, `Health.Damaged`
+- `PlayerCombat.Attacked(result, monster)`, `Died(monster)`, `Revived`, `PlayerCombat.Health.Damaged`
 
 Damage numbers and HP bars (GAM-12) and the HUD log (GAM-15) can hook these.
 
 ## Test map
 
-`Main.tscn` has two monsters next to the player start: a Slime (60 HP) and a tougher Boar (140 HP, more FLEE). Killing one gives EXP to `PlayerCombat.Stats`. The player's starting stats and weapon ATK are exports on the `Combat` node in `Player.tscn`.
+`Main.tscn` has two spawn points near the player start: three passive Slimes (60 HP) and two aggressive Boars (140 HP, more FLEE). Killing one gives EXP to `PlayerCombat.Stats`, and it comes back after its respawn time. The player's starting stats and weapon ATK are exports on the `Combat` node in `Player.tscn`. See [monsters](monsters.md).

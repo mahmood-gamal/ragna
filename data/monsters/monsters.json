@@ -1,0 +1,55 @@
+{
+  // Monster types. Distances in metres, times in seconds, speeds in m/s. See docs/monsters.md.
+  "monsters": [
+    {
+      "id": "slime",
+      "name": "Slime",
+      "level": 1,
+      "maxHp": 60,
+      "atk": 6,
+      "def": 2,
+      "hit": 8,
+      "flee": 5,
+      "expReward": 30,
+      "moveSpeed": 1.2,
+      "chaseSpeed": 2.5,
+      "attackDelay": 1.8,
+      "respawnTime": 8,
+      "tint": "#8cff8c",
+      "behavior": {
+        "aggressive": false,
+        "aggroRadius": 0,
+        "attackRange": 1.3,
+        "wanderRadius": 4,
+        "leashRadius": 10,
+        "idleTimeMin": 2,
+        "idleTimeMax": 5
+      }
+    },
+    {
+      "id": "boar",
+      "name": "Boar",
+      "level": 4,
+      "maxHp": 140,
+      "atk": 14,
+      "def": 6,
+      "hit": 18,
+      "flee": 12,
+      "expReward": 80,
+      "moveSpeed": 1.6,
+      "chaseSpeed": 3.6,
+      "attackDelay": 1.4,
+      "respawnTime": 15,
+      "tint": "#ff9973",
+      "behavior": {
+        "aggressive": true,
+        "aggroRadius": 5,
+        "attackRange": 1.4,
+        "wanderRadius": 5,
+        "leashRadius": 12,
+        "idleTimeMin": 1.5,
+        "idleTimeMax": 4
+      }
+    }
+  ]
+}
