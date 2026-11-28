@@ -36,4 +36,14 @@ public static class HudMessages
     public static LogMessage Died(string killer) => new(MessageKind.System, $"You were defeated by {killer}.");
 
     public static LogMessage Revived() => new(MessageKind.System, "You are back on your feet.");
+
+    public static LogMessage Saved() => new(MessageKind.System, "Game saved.");
+
+    public static LogMessage Loaded() => new(MessageKind.System, "Game loaded.");
+
+    /// <summary>Saving or loading failed because of <paramref name="reason"/>.</summary>
+    public static LogMessage SaveFailed(string reason) => new(MessageKind.System, $"Couldn't save: {reason}");
+
+    /// <inheritdoc cref="SaveFailed"/>
+    public static LogMessage LoadFailed(string reason) => new(MessageKind.System, $"Couldn't load: {reason}");
 }

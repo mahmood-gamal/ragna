@@ -20,18 +20,7 @@ public sealed class CharacterStats
     public CharacterStats(StatTable table, int level, long exp, BaseStats baseStats, int statPoints)
     {
         ArgumentNullException.ThrowIfNull(table);
-        ArgumentOutOfRangeException.ThrowIfLessThan(level, 1);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(level, table.MaxBaseLevel);
-        ArgumentOutOfRangeException.ThrowIfNegative(exp);
-        ArgumentOutOfRangeException.ThrowIfNegative(statPoints);
-        foreach (var stat in Enum.GetValues<StatType>())
-        {
-            if (baseStats[stat] < table.StartingStatValue || baseStats[stat] > table.MaxStatValue)
-            {
-                throw new ArgumentOutOfRangeException(nameof(baseStats), $"{stat} is out of range.");
-            }
-        }
-
+        Check(table, level, exp, baseStats, statPoints);
         Table = table;
         Level = level;
         Exp = level == table.MaxBaseLevel ? 0 : exp;
@@ -136,6 +125,23 @@ public sealed class CharacterStats
         return gained;
     }
 
+    /// <summary>
+    /// Sets level, EXP, base stats and stat points in place, for example when loading a save, so
+    /// anything listening to this object keeps working. Modifier sources stay. Raises
+    /// <see cref="Changed"/> and <see cref="ExpChanged"/>, not <see cref="LevelledUp"/>.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">A value is out of the table's range; nothing changes.</exception>
+    public void Restore(int level, long exp, BaseStats baseStats, int statPoints)
+    {
+        Check(Table, level, exp, baseStats, statPoints);
+        Level = level;
+        Exp = level == Table.MaxBaseLevel ? 0 : exp;
+        Base = baseStats;
+        StatPoints = statPoints;
+        Invalidate();
+        ExpChanged?.Invoke();
+    }
+
     public void AddModifierSource(IStatModifierSource source)
     {
         ArgumentNullException.ThrowIfNull(source);
@@ -152,6 +158,21 @@ public sealed class CharacterStats
         }
 
         return removed;
+    }
+
+    private static void Check(StatTable table, int level, long exp, BaseStats baseStats, int statPoints)
+    {
+        ArgumentOutOfRangeException.ThrowIfLessThan(level, 1);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(level, table.MaxBaseLevel);
+        ArgumentOutOfRangeException.ThrowIfNegative(exp);
+        ArgumentOutOfRangeException.ThrowIfNegative(statPoints);
+        foreach (var stat in Enum.GetValues<StatType>())
+        {
+            if (baseStats[stat] < table.StartingStatValue || baseStats[stat] > table.MaxStatValue)
+            {
+                throw new ArgumentOutOfRangeException(nameof(baseStats), $"{stat} is out of range.");
+            }
+        }
     }
 
     /// <summary>Call when a source's modifiers change, for example a skill levelled up.</summary>

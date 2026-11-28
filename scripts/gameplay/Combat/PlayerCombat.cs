@@ -1,5 +1,6 @@
 using Godot;
 using Ragna.Core.Combat;
+using Ragna.Core.Save;
 using Ragna.Core.Stats;
 using Ragna.Gameplay.Characters;
 using Ragna.Gameplay.Movement;
@@ -231,6 +232,29 @@ public partial class PlayerCombat : Node
                 StandAndFace(targetPosition - position);
                 Swing(Target!);
                 break;
+        }
+    }
+
+    /// <summary>The player's level, stats, HP, SP and position, for a save file.</summary>
+    public PlayerSave CaptureSave() => SaveMapper.CapturePlayer(Stats, Health, Sp, ToCore(_body.GlobalPosition));
+
+    /// <summary>
+    /// Restores the player from <paramref name="save"/>: stops attacking and walking, sets stats,
+    /// HP and SP in place (so the HUD keeps following them) and moves the player to the saved
+    /// position. A player who was dead is brought back.
+    /// </summary>
+    /// <exception cref="InvalidDataException">The saved stats are out of range; nothing changes.</exception>
+    public void RestoreSave(PlayerSave save)
+    {
+        ArgumentNullException.ThrowIfNull(save);
+        var wasDead = IsDead;
+        SaveMapper.RestorePlayer(save, Stats, Health, Sp);
+        StopAttacking();
+        _body.Teleport(new Vector3(save.Position.X, save.Position.Y, save.Position.Z));
+        _reviveIn = 0;
+        if (wasDead)
+        {
+            Revived?.Invoke();
         }
     }
 

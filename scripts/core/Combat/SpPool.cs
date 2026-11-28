@@ -65,6 +65,13 @@ public sealed class SpPool
         Changed?.Invoke();
     }
 
+    /// <summary>Sets SP to <paramref name="current"/>, kept between 0 and <see cref="Max"/>, for example when loading a save.</summary>
+    public void SetCurrent(int current)
+    {
+        Current = Math.Clamp(current, 0, Max);
+        Changed?.Invoke();
+    }
+
     /// <summary>Back to full SP, for example on respawn.</summary>
     public void Refill()
     {
