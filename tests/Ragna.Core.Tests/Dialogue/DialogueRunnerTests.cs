@@ -34,7 +34,7 @@ public sealed class DialogueRunnerTests
             { "cmd": "enter", "character": "elder", "slot": "right" },
             { "cmd": "say", "speaker": "elder", "text": "Hello." },
             { "cmd": "wait", "seconds": 2 },
-            { "cmd": "expression", "character": "elder", "expression": "smile" },
+            { "cmd": "expression", "character": "elder", "expression": "happy" },
             { "cmd": "exit", "character": "elder" }
             """);
 
@@ -44,7 +44,7 @@ public sealed class DialogueRunnerTests
                 new CharacterEntered("elder", StageSlot.Right, "neutral"),
                 new LineShown("elder", "Hello."),
                 new WaitRequested(2),
-                new ExpressionChanged("elder", StageSlot.Right, "smile"),
+                new ExpressionChanged("elder", StageSlot.Right, "happy"),
                 new CharacterExited("elder", StageSlot.Right),
                 new DialogueEnded(),
             ],
@@ -248,7 +248,7 @@ public sealed class DialogueRunnerTests
             { "cmd": "background", "image": "forest" },
             { "cmd": "enter", "character": "elder", "slot": "left" },
             { "cmd": "enter", "character": "hero", "slot": "right", "expression": "angry" },
-            { "cmd": "expression", "character": "elder", "expression": "smile" },
+            { "cmd": "expression", "character": "elder", "expression": "happy" },
             { "cmd": "say", "text": "Pause." },
             { "cmd": "exit" },
             { "cmd": "background" }
@@ -256,7 +256,7 @@ public sealed class DialogueRunnerTests
 
         Assert.IsType<LineShown>(RunUntilLine(runner));
         Assert.Equal("forest", runner.Background);
-        Assert.Equal(new StageActor("elder", "smile"), runner.Stage[StageSlot.Left]);
+        Assert.Equal(new StageActor("elder", "happy"), runner.Stage[StageSlot.Left]);
         Assert.Equal(new StageActor("hero", "angry"), runner.Stage[StageSlot.Right]);
 
         var rest = RunToChoiceOrEnd(runner);
@@ -297,7 +297,7 @@ public sealed class DialogueRunnerTests
     }
 
     [Theory]
-    [InlineData("""{ "cmd": "expression", "character": "ghost", "expression": "boo" }""")]
+    [InlineData("""{ "cmd": "expression", "character": "ghost", "expression": "sad" }""")]
     [InlineData("""{ "cmd": "exit", "character": "ghost" }""")]
     public void Touching_a_character_who_is_not_on_stage_names_the_script(string command)
     {
@@ -342,5 +342,30 @@ public sealed class DialogueRunnerTests
         while (next.Instant);
 
         return next;
+    }
+
+    [Fact]
+    public void Entering_keeps_flip_on_the_event_and_the_stage()
+    {
+        var runner = Runner("""{ "cmd": "enter", "character": "elder", "slot": "far_right", "flip": true }""");
+
+        Assert.Equal(new CharacterEntered("elder", StageSlot.FarRight, "neutral", Flip: true), runner.Advance());
+        Assert.Equal(new StageActor("elder", "neutral", Flip: true), runner.Stage[StageSlot.FarRight]);
+    }
+
+    [Fact]
+    public void Everyone_exits_left_to_right_in_a_group_of_four()
+    {
+        var runner = Runner("""
+            { "cmd": "enter", "character": "d", "slot": "far_right" },
+            { "cmd": "enter", "character": "b", "slot": "left" },
+            { "cmd": "enter", "character": "a", "slot": "far_left" },
+            { "cmd": "enter", "character": "c", "slot": "right" },
+            { "cmd": "exit" }
+            """);
+
+        var exits = RunToChoiceOrEnd(runner).OfType<CharacterExited>().Select(e => e.Character);
+
+        Assert.Equal(["a", "b", "c", "d"], exits);
     }
 }

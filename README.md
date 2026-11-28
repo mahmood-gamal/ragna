@@ -38,12 +38,12 @@ dotnet test
 | `scripts/ui/` | HUD, inventory and menu scripts |
 | `scripts/dialogue/` | Dialogue runner and scene UI |
 | `data/` | Data files (JSON dialogue, item and monster tables). `data/stats/stat_table.json` tunes stats, levels and EXP; `data/monsters/monsters.json` defines monster types and their drops; `data/items/items.json` defines item types; `data/dialogue/` holds dialogue scripts |
-| `assets/` | Art, audio, fonts |
+| `assets/` | Art, audio, fonts. Dialogue portraits go in `assets/portraits/<character>/<expression>.png` and backgrounds in `assets/backgrounds/` |
 | `scenes/maps/` | Playable maps (`TestMap.tscn` is generated, see [docs/terrain.md](docs/terrain.md)) |
 | `assets/terrain/` | Terrain MeshLibrary, materials and textures |
 | `tools/` | Asset build scripts (`tools/build_terrain.sh`, `tools/characters/make_placeholder_sprites.py`) |
 | `scenes/items/` | Items on the ground (`GroundItem.tscn`) |
-| `scenes/ui/` | UI windows (`InventoryWindow.tscn`) and the HUD (`Hud.tscn`) |
+| `scenes/ui/` | UI windows (`InventoryWindow.tscn`), the HUD (`Hud.tscn`) and the dialogue scene (`DialogueScene.tscn`) |
 | `scenes/actors/` | Characters (`Player.tscn`, `Monster.tscn`) and the character sprite with its blob shadow (`CharacterVisual.tscn`) |
 | `assets/characters/` | Character sprite sheets and `SpriteFrames` |
 | `docs/` | Guides, for example [terrain and GridMap painting](docs/terrain.md), the [game camera](docs/camera.md), [click-to-move and navmesh baking](docs/navigation.md) and [character sprites](docs/characters.md), [stats, levels and EXP](docs/stats.md), [combat](docs/combat.md), [monsters, AI and spawn points](docs/monsters.md), [item drops and pick-up](docs/items.md) the [inventory](docs/inventory.md), the [HUD](docs/hud.md), [saving and loading](docs/save.md) and [dialogue scripts](docs/dialogue.md) |
@@ -58,10 +58,12 @@ dotnet test
 | Left-click an item on the ground | Walk to it and pick it up |
 | **I** | Open or close the inventory |
 | **F5** / **F9** | Save / load the game |
+| **F8** | Play the example dialogue scene |
+| Click / **Enter**, hold **Ctrl**, **H** | In a dialogue: next line, skip, history log |
 | **Q** / **E** | Turn the camera 45° around the player |
 | Mouse wheel | Zoom in and out |
 
-See [docs/navigation.md](docs/navigation.md), [docs/camera.md](docs/camera.md), [docs/combat.md](docs/combat.md), [docs/monsters.md](docs/monsters.md), [docs/items.md](docs/items.md), [docs/inventory.md](docs/inventory.md), [docs/hud.md](docs/hud.md) and [docs/save.md](docs/save.md).
+See [docs/navigation.md](docs/navigation.md), [docs/camera.md](docs/camera.md), [docs/combat.md](docs/combat.md), [docs/monsters.md](docs/monsters.md), [docs/items.md](docs/items.md), [docs/inventory.md](docs/inventory.md), [docs/hud.md](docs/hud.md), [docs/save.md](docs/save.md) and [docs/dialogue.md](docs/dialogue.md).
 
 ## C# conventions
 

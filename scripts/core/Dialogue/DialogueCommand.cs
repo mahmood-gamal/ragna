@@ -3,8 +3,11 @@ namespace Ragna.Core.Dialogue;
 /// <summary>One step of a <see cref="DialogueScript"/>. Read from JSON by <see cref="DialogueScript.FromJson"/>.</summary>
 public abstract record DialogueCommand;
 
-/// <summary>Puts <paramref name="Character"/> on stage in <paramref name="Slot"/>, showing <paramref name="Expression"/>.</summary>
-public sealed record EnterCommand(string Character, StageSlot Slot, string Expression) : DialogueCommand;
+/// <summary>
+/// Puts <paramref name="Character"/> on stage in <paramref name="Slot"/>, showing <paramref name="Expression"/>.
+/// <paramref name="Flip"/> mirrors the portrait from the way it faces by default (see <see cref="StageSlots.FacesLeft"/>).
+/// </summary>
+public sealed record EnterCommand(string Character, StageSlot Slot, string Expression, bool Flip = false) : DialogueCommand;
 
 /// <summary>Takes <paramref name="Character"/> off stage, or everyone when it is null.</summary>
 public sealed record ExitCommand(string? Character) : DialogueCommand;
@@ -39,10 +42,13 @@ public sealed record WaitCommand(double Seconds) : DialogueCommand;
 /// <summary>Ends the script at once.</summary>
 public sealed record EndCommand : DialogueCommand;
 
-/// <summary>Where a character stands on the dialogue stage.</summary>
+/// <summary>Where a character stands on the dialogue stage, from the left edge of the screen to the right.</summary>
+/// <remarks>Most scenes use <see cref="Left"/> and <see cref="Right"/>. <see cref="FarLeft"/> and <see cref="FarRight"/> make room for group scenes of four.</remarks>
 public enum StageSlot
 {
+    FarLeft,
     Left,
     Center,
     Right,
+    FarRight,
 }

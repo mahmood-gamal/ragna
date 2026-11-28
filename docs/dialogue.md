@@ -2,7 +2,7 @@
 
 A dialogue scene is a JSON file in `data/dialogue/`. Adding a scene needs no code. [`data/dialogue/example.json`](../data/dialogue/example.json) shows every command.
 
-The scene UI (portraits, text box, typewriter) and NPC triggers are separate tickets. This page covers the script format and the runner.
+This page covers the script format, the runner and the [dialogue scene UI](#the-dialogue-scene). NPC triggers are a separate ticket.
 
 ## File format
 
@@ -24,7 +24,7 @@ The scene UI (portraits, text box, typewriter) and NPC triggers are separate tic
 
 | `cmd` | Fields | What it does |
 | --- | --- | --- |
-| `enter` | `character`, `slot` (`left`, `center` or `right`), optional `expression` (default `neutral`) | Puts a character on stage. If they are already on stage, they move. Whoever stood in that slot leaves. |
+| `enter` | `character`, `slot`, optional `expression` (default `neutral`), optional `flip` (default `false`) | Puts a character on stage. If they are already on stage, they move. Whoever stood in that slot leaves. |
 | `exit` | optional `character` | Takes the character off stage. With no `character`, everyone leaves. |
 | `expression` | `character`, `expression` | Changes the portrait of a character on stage. |
 | `say` | optional `speaker`, `text` | Shows a line and waits for a click. No `speaker` means narration. The speaker doesn't have to be on stage. |
@@ -36,6 +36,14 @@ The scene UI (portraits, text box, typewriter) and NPC triggers are separate tic
 | `end` | | Ends the scene at once, even from inside a branch. |
 
 `then` and `else` blocks can hold any commands, including more choices and branches.
+
+**Slots**, left to right: `far_left`, `left`, `center`, `right`, `far_right`. Two-person scenes use `left` and `right`. Group scenes of four add `far_left` and `far_right`.
+
+**Expressions**: `neutral`, `happy`, `angry`, `sad`, `surprised`. Any other name fails when the script loads.
+
+**Facing**: portrait art faces right. Portraits in `right` and `far_right` are mirrored so they face the middle. `"flip": true` reverses that for one character.
+
+**Choices**: the scene shows 2–3 options well. More options work but crowd the screen.
 
 ## Running a script
 
@@ -68,5 +76,42 @@ Calling `Advance` while a choice is waiting throws `InvalidOperationException`. 
 | `DialogueCommand` records | `scripts/core/Dialogue/DialogueCommand.cs` | One record per command |
 | `DialogueRunner` | `scripts/core/Dialogue/` | Steps through a script, tracks the stage, reads and writes flags |
 | `DialogueEvent` records | `scripts/core/Dialogue/DialogueEvent.cs` | What the UI should do next |
+| `DialogueSession` | `scripts/core/Dialogue/` | Drives a runner for the scene UI: typewriter, waits, skip, choices, history |
+| `Typewriter`, `DialogueHistory`, `StageSlots`, `Expressions`, `SpeakerNames` | `scripts/core/Dialogue/` | Text reveal, the history log, slot positions and facing, the known expressions, name plate text |
+| `DialogueScene` | `scripts/dialogue/DialogueScene.cs`, `scenes/ui/DialogueScene.tscn` | The full-screen scene UI (Godot) |
+| `PortraitView` | `scripts/dialogue/PortraitView.cs` | One bust portrait (Godot) |
 
-They have no Godot dependency and are tested in `tests/Ragna.Core.Tests/Dialogue/`.
+Everything under `scripts/core/` has no Godot dependency and is tested in `tests/Ragna.Core.Tests/Dialogue/`.
+
+## The dialogue scene
+
+![A dialogue scene over the blurred world, with a choice](images/dialogue-scene.png)
+
+`DialogueScene` is a full-screen `CanvasLayer` (layer 10) in `Main.tscn`. While a scene plays, the world is paused and the scene swallows all input.
+
+```csharp
+DialogueScene.Instance?.Play("elder_intro");   // data/dialogue/elder_intro.json
+DialogueScene.Instance!.Finished += id => GD.Print($"{id} is over");
+```
+
+`Play(DialogueScript)` plays a script that is already loaded. Flags go to `SaveService.Flags`, so they are saved with the game.
+
+| Input | What it does |
+| --- | --- |
+| Click or **Enter** | Shows the whole line if it is still typing, otherwise moves on |
+| Hold **Ctrl** | Skips lines and waits, stopping at the next choice |
+| **1**–**3**, or click | Picks a choice |
+| **H**, or the Log button | Opens or closes the history log (**Esc** closes it too) |
+| **F8** | Plays `data/dialogue/example.json`, to try the scene out (set `DebugScriptId` to empty to turn it off) |
+
+What it shows:
+
+- **Portraits.** Busts stand along the bottom of the screen in their slot. The speaker shows at full brightness and size; everyone else is dimmed and slightly smaller. During narration everyone is dimmed. Portraits slide and fade in from their side of the screen, and out again.
+- **Portrait art.** `res://assets/portraits/<character>/<expression>.png`, for example `assets/portraits/elder/happy.png`. A missing expression falls back to the character's `neutral.png`. A character with no art yet gets a drawn placeholder bust with a simple face for each expression.
+- **Text box.** Along the bottom, with the speaker's name on a plate above it. The name is the character id in title case (`old_man` shows as `Old Man`). Narration has no plate and lighter text. A blinking ▼ means the line is complete.
+- **Typewriter.** `CharactersPerSecond` on the node (default 40; 0 shows lines at once).
+- **Background.** With no `background`, the world shows dimmed and blurred (`assets/shaders/dialogue_blur.gdshader`). `"image"` shows a full-screen image instead: a `res://` path, or a name in `res://assets/backgrounds/` (`"village"` is `village.png`). An image that can't be found logs a warning and shows the world.
+
+![A group scene of four over a full-screen image](images/dialogue-group.png)
+
+A group of four over a full-screen image, made with a test script. The mage on the left uses `"flip": true`.
