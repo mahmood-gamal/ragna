@@ -151,6 +151,13 @@ public partial class ClickToMoveController : CharacterBody3D
         Velocity = Vector3.Zero;
     }
 
+    /// <summary>Puts the character at <paramref name="point"/> standing still, for example when loading a save.</summary>
+    public void Teleport(Vector3 point)
+    {
+        GlobalPosition = point;
+        StopMoving();
+    }
+
     /// <summary>Where the ray through <paramref name="screenPoint"/> hits the ground, if anywhere.</summary>
     public Vector3? PickGround(Vector2 screenPoint)
     {

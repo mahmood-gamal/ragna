@@ -214,6 +214,39 @@ public sealed class Inventory
         return true;
     }
 
+    /// <summary>
+    /// Empties the inventory, then puts each stack in its slot, as when loading a save. Raises
+    /// <see cref="Changed"/> once.
+    /// </summary>
+    /// <exception cref="ArgumentException">
+    /// A slot is out of range or listed twice, or a quantity is below 1 or above the item's max
+    /// stack. Nothing changes.
+    /// </exception>
+    public void Load(IEnumerable<(int Slot, ItemStack Stack)> stacks)
+    {
+        ArgumentNullException.ThrowIfNull(stacks);
+        var loaded = new ItemStack?[_slots.Length];
+        foreach (var (slot, stack) in stacks)
+        {
+            CheckSlot(slot);
+            ArgumentNullException.ThrowIfNull(stack.Item, nameof(stacks));
+            if (stack.Quantity < 1 || stack.Quantity > stack.Item.MaxStack)
+            {
+                throw new ArgumentException($"Slot {slot}: {stack.Quantity} × {stack.Item.Id} doesn't fit one stack.", nameof(stacks));
+            }
+
+            if (loaded[slot] is not null)
+            {
+                throw new ArgumentException($"Slot {slot} is listed twice.", nameof(stacks));
+            }
+
+            loaded[slot] = stack;
+        }
+
+        Array.Copy(loaded, _slots, _slots.Length);
+        Changed?.Invoke();
+    }
+
     /// <summary>Empties every slot.</summary>
     public void Clear()
     {

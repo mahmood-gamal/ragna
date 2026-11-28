@@ -85,6 +85,17 @@ public sealed class Health
         Changed?.Invoke();
     }
 
+    /// <summary>
+    /// Sets HP to <paramref name="current"/>, kept between 1 and <see cref="Max"/>, for example when
+    /// loading a save. Brings the dead back to life. Raises <see cref="Changed"/>, not
+    /// <see cref="Damaged"/> or <see cref="Died"/>.
+    /// </summary>
+    public void SetCurrent(int current)
+    {
+        Current = Math.Clamp(current, 1, Max);
+        Changed?.Invoke();
+    }
+
     /// <summary>Back to full HP, for example on respawn.</summary>
     public void Revive()
     {

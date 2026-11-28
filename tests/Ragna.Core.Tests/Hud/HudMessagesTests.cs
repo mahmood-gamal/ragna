@@ -52,4 +52,13 @@ public sealed class HudMessagesTests
         Assert.Equal(new LogMessage(MessageKind.System, "You were defeated by Boar."), HudMessages.Died("Boar"));
         Assert.Equal(MessageKind.System, HudMessages.Revived().Kind);
     }
+
+    [Fact]
+    public void Save_and_load_messages()
+    {
+        Assert.Equal(new LogMessage(MessageKind.System, "Game saved."), HudMessages.Saved());
+        Assert.Equal(new LogMessage(MessageKind.System, "Game loaded."), HudMessages.Loaded());
+        Assert.Equal(new LogMessage(MessageKind.System, "Couldn't save: disk full"), HudMessages.SaveFailed("disk full"));
+        Assert.Equal(new LogMessage(MessageKind.System, "Couldn't load: no save file."), HudMessages.LoadFailed("no save file."));
+    }
 }

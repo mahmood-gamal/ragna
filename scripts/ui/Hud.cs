@@ -4,6 +4,7 @@ using Ragna.Core.Hud;
 using Ragna.Core.Items;
 using Ragna.Gameplay.Combat;
 using Ragna.Gameplay.Items;
+using Ragna.Gameplay.Save;
 
 namespace Ragna.Ui;
 
@@ -40,6 +41,7 @@ public partial class Hud : Control
 
     private PlayerCombat? _player;
     private PlayerPickup? _pickup;
+    private SaveService? _saves;
     private Label? _level;
     private HudBar? _hp;
     private HudBar? _sp;
@@ -100,6 +102,15 @@ public partial class Hud : Control
             _pickup.PickedUp += OnPickedUp;
         }
 
+        _saves = SaveService.Instance;
+        if (_saves is not null)
+        {
+            _saves.Saved += OnSaved;
+            _saves.Loaded += OnLoaded;
+            _saves.SaveFailed += OnSaveFailed;
+            _saves.LoadFailed += OnLoadFailed;
+        }
+
         RefreshHp();
         RefreshSp();
         RefreshExp();
@@ -125,6 +136,14 @@ public partial class Hud : Control
         {
             _pickup.PickedUp -= OnPickedUp;
         }
+
+        if (_saves is not null)
+        {
+            _saves.Saved -= OnSaved;
+            _saves.Loaded -= OnLoaded;
+            _saves.SaveFailed -= OnSaveFailed;
+            _saves.LoadFailed -= OnLoadFailed;
+        }
     }
 
     /// <summary>Adds a line to the message log.</summary>
@@ -137,6 +156,14 @@ public partial class Hud : Control
     private void OnKilled(Monster monster, int exp) => Log.Add(HudMessages.Defeated(monster.DisplayName, exp));
 
     private void OnDied(Monster killer) => Log.Add(HudMessages.Died(killer.DisplayName));
+
+    private void OnSaved() => Log.Add(HudMessages.Saved());
+
+    private void OnLoaded() => Log.Add(HudMessages.Loaded());
+
+    private void OnSaveFailed(string reason) => Log.Add(HudMessages.SaveFailed(reason));
+
+    private void OnLoadFailed(string reason) => Log.Add(HudMessages.LoadFailed(reason));
 
     private void OnRevived() => Log.Add(HudMessages.Revived());
 
