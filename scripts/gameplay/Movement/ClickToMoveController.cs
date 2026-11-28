@@ -133,6 +133,24 @@ public partial class ClickToMoveController : CharacterBody3D
         GlobalPosition = position;
     }
 
+    /// <summary>
+    /// Walks to <paramref name="point"/> along the navmesh as if the ground there was clicked once,
+    /// for example to chase an attack target. Ends any hold of the move button.
+    /// </summary>
+    public void MoveTo(Vector3 point)
+    {
+        _mover.MoveTo(ToCore(point));
+        _agent.TargetPosition = point;
+    }
+
+    /// <summary>Stops walking where the character stands, for example to attack.</summary>
+    public void StopMoving()
+    {
+        _mover.Stop();
+        _agent.TargetPosition = GlobalPosition;
+        Velocity = Vector3.Zero;
+    }
+
     /// <summary>Where the ray through <paramref name="screenPoint"/> hits the ground, if anywhere.</summary>
     public Vector3? PickGround(Vector2 screenPoint)
     {

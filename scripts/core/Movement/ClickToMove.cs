@@ -90,6 +90,24 @@ public sealed class ClickToMove
     /// <summary>The move button was released. The character still walks to the last destination.</summary>
     public void Release() => IsHolding = false;
 
+    /// <summary>
+    /// Walks to <paramref name="point"/> without holding the button, for example when chasing an
+    /// attack target. Ends any hold. The caller asks for the path.
+    /// </summary>
+    public void MoveTo(Vector3 point)
+    {
+        IsHolding = false;
+        Destination = point;
+        _sinceRepath = 0f;
+    }
+
+    /// <summary>Stops walking and ends any hold, for example when an attack target comes into range.</summary>
+    public void Stop()
+    {
+        IsHolding = false;
+        Destination = null;
+    }
+
     /// <summary>The character reached the end of its path.</summary>
     public void Arrive()
     {
