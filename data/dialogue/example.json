@@ -1,0 +1,41 @@
+// Format reference for dialogue scripts. See docs/dialogue.md.
+{
+  "id": "example",
+  "commands": [
+    { "cmd": "background", "image": "res://assets/backgrounds/village.png" },
+    { "cmd": "enter", "character": "elder", "slot": "right" },
+    { "cmd": "if_flag", "flag": "met_elder",
+      "then": [
+        { "cmd": "say", "speaker": "elder", "text": "Back again, traveller?" }
+      ],
+      "else": [
+        { "cmd": "say", "speaker": "elder", "text": "Welcome to the village. I don't think we've met." },
+        { "cmd": "set_flag", "flag": "met_elder" }
+      ]
+    },
+    { "cmd": "enter", "character": "hero", "slot": "left" },
+    { "cmd": "choice", "options": [
+      { "text": "Any work for me?",
+        "then": [
+          { "cmd": "expression", "character": "elder", "expression": "smile" },
+          { "cmd": "say", "speaker": "elder", "text": "Slimes have been eating the crops. Thin them out." },
+          { "cmd": "set_flag", "flag": "slime_quest" }
+        ]
+      },
+      { "text": "About those slimes...", "ifFlag": "slime_quest",
+        "then": [
+          { "cmd": "say", "speaker": "elder", "text": "Keep at it." }
+        ]
+      },
+      { "text": "Goodbye.",
+        "then": [
+          { "cmd": "say", "speaker": "hero", "text": "I'll be on my way." },
+          { "cmd": "end" }
+        ]
+      }
+    ]},
+    { "cmd": "wait", "seconds": 0.5 },
+    { "cmd": "say", "text": "The elder turns back to the fire." },
+    { "cmd": "exit" }
+  ]
+}
