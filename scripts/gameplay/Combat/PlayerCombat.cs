@@ -20,6 +20,9 @@ namespace Ragna.Gameplay.Combat;
 /// </remarks>
 public partial class PlayerCombat : Node
 {
+    /// <summary>Group the player's combat node is in, so monsters can find it.</summary>
+    public const string Group = "player";
+
     private const float PickRayLength = 1000f;
     private const string StatTablePath = "res://data/stats/stat_table.json";
 
@@ -27,6 +30,7 @@ public partial class PlayerCombat : Node
     private DamageCalculator _damage = new();
     private ClickToMoveController _body = null!;
     private CharacterSprite? _sprite;
+    private double _reviveIn;
 
     /// <summary>Raised after each attack the player makes, with the target.</summary>
     public event Action<AttackResult, Monster>? AttackMade;
@@ -36,6 +40,15 @@ public partial class PlayerCombat : Node
 
     /// <summary>Raised when the target changes. <c>null</c> when the player stops attacking.</summary>
     public event Action<Monster?>? TargetChanged;
+
+    /// <summary>Raised when a monster attacks the player, hit or miss, with the attacker.</summary>
+    public event Action<AttackResult, Monster>? Attacked;
+
+    /// <summary>Raised once when the player's HP reaches 0, with the killer.</summary>
+    public event Action<Monster>? Died;
+
+    /// <summary>Raised when the player comes back to life after dying.</summary>
+    public event Action? Revived;
 
     /// <summary>The sprite to face the target and play <c>attack</c>. Defaults to the first one under the player.</summary>
     [Export]
@@ -48,6 +61,13 @@ public partial class PlayerCombat : Node
     /// <summary>Physics layers the click ray can hit. Terrain (1) blocks it; monsters (3) are targets.</summary>
     [Export(PropertyHint.Layers3DPhysics)]
     public uint PickMask { get; set; } = 1u | Monster.MonsterLayer;
+
+    /// <summary>
+    /// Seconds after dying before the player is back on their feet with full HP, where they fell.
+    /// A stand-in until there is a proper death screen.
+    /// </summary>
+    [Export(PropertyHint.Range, "0,60,0.5,suffix:s")]
+    public float ReviveTime { get; set; } = 5f;
 
     [ExportGroup("Starting stats")]
     [Export(PropertyHint.Range, "1,99,1")]
@@ -80,6 +100,14 @@ public partial class PlayerCombat : Node
 
     public CombatStats CombatStats => CombatStats.FromCharacter(Stats, WeaponAtk);
 
+    /// <summary>The player's HP. Max HP follows <see cref="Stats"/>.</summary>
+    public Health Health { get; private set; } = new(1);
+
+    public bool IsDead => Health.IsDead;
+
+    /// <summary>The player's body, for its position.</summary>
+    public Node3D Body => _body;
+
     public override void _Ready()
     {
         _body = GetParent() as ClickToMoveController
@@ -89,12 +117,45 @@ public partial class PlayerCombat : Node
 
         var table = LoadStatTable();
         Stats = new CharacterStats(table, 1, 0, new BaseStats(Str, Agi, Vit, Int, Dex, Luk), statPoints: 0);
+        Health = new Health(Stats.Derived.MaxHp);
+        Stats.Changed += () => Health.SetMax(Stats.Derived.MaxHp);
+        AddToGroup(Group);
+    }
+
+    /// <summary>Applies one attack from <paramref name="attacker"/>. Does nothing once dead.</summary>
+    public void ReceiveAttack(AttackResult result, Monster attacker)
+    {
+        ArgumentNullException.ThrowIfNull(attacker);
+        if (IsDead)
+        {
+            return;
+        }
+
+        Health.TakeDamage(result.Damage);
+        Attacked?.Invoke(result, attacker);
+        if (!IsDead)
+        {
+            return;
+        }
+
+        StopAttacking();
+        _body.StopMoving();
+        _reviveIn = ReviveTime;
+        Died?.Invoke(attacker);
+        GD.Print($"Killed by {attacker.DisplayName}. Back on your feet in {ReviveTime:0.#} s.");
     }
 
     public override void _UnhandledInput(InputEvent @event)
     {
         if (!@event.IsActionPressed(ClickToMoveController.MoveAction))
         {
+            return;
+        }
+
+        if (IsDead)
+        {
+            // The dead neither walk nor fight.
+            GetViewport().SetInputAsHandled();
             return;
         }
 
@@ -113,6 +174,18 @@ public partial class PlayerCombat : Node
 
     public override void _PhysicsProcess(double delta)
     {
+        if (IsDead)
+        {
+            _reviveIn -= delta;
+            if (_reviveIn <= 0)
+            {
+                Health.Revive();
+                Revived?.Invoke();
+            }
+
+            return;
+        }
+
         if (Target is { } target && !IsInstanceValid(target))
         {
             SetTarget(null);
@@ -156,7 +229,7 @@ public partial class PlayerCombat : Node
     public void Attack(Monster monster)
     {
         ArgumentNullException.ThrowIfNull(monster);
-        if (monster.IsDead)
+        if (monster.IsDead || IsDead)
         {
             return;
         }
