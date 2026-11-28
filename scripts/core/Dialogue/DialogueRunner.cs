@@ -170,8 +170,8 @@ public sealed class DialogueRunner
             _pending.Enqueue(new CharacterExited(occupant.Character, enter.Slot));
         }
 
-        _stage[enter.Slot] = new StageActor(enter.Character, enter.Expression);
-        _pending.Enqueue(new CharacterEntered(enter.Character, enter.Slot, enter.Expression));
+        _stage[enter.Slot] = new StageActor(enter.Character, enter.Expression, enter.Flip);
+        _pending.Enqueue(new CharacterEntered(enter.Character, enter.Slot, enter.Expression, enter.Flip));
     }
 
     private void Exit(string? character)
@@ -220,5 +220,5 @@ public sealed class DialogueRunner
     }
 }
 
-/// <summary>A character on the dialogue stage and the portrait they show.</summary>
-public sealed record StageActor(string Character, string Expression);
+/// <summary>A character on the dialogue stage, the portrait they show and whether it is flipped.</summary>
+public sealed record StageActor(string Character, string Expression, bool Flip = false);

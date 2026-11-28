@@ -96,17 +96,18 @@ public sealed class DialogueScript
         switch (cmd)
         {
             case "enter":
-                CheckKeys(e, path, "cmd", "character", "slot", "expression");
+                CheckKeys(e, path, "cmd", "character", "slot", "expression", "flip");
                 return new EnterCommand(
                     RequiredString(e, "character", path),
                     ReadSlot(e, path),
-                    OptionalString(e, "expression", path) ?? DialogueRunner.DefaultExpression);
+                    ReadExpression(e, path, required: false) ?? DialogueRunner.DefaultExpression,
+                    OptionalBool(e, "flip", path) ?? false);
             case "exit":
                 CheckKeys(e, path, "cmd", "character");
                 return new ExitCommand(OptionalString(e, "character", path));
             case "expression":
                 CheckKeys(e, path, "cmd", "character", "expression");
-                return new ExpressionCommand(RequiredString(e, "character", path), RequiredString(e, "expression", path));
+                return new ExpressionCommand(RequiredString(e, "character", path), ReadExpression(e, path, required: true)!);
             case "say":
                 CheckKeys(e, path, "cmd", "speaker", "text");
                 return new SayCommand(OptionalString(e, "speaker", path), RequiredString(e, "text", path));
@@ -174,13 +175,20 @@ public sealed class DialogueScript
     private static StageSlot ReadSlot(JsonElement e, string path)
     {
         var slot = RequiredString(e, "slot", path);
-        return slot switch
+        return StageSlots.TryParse(slot, out var parsed)
+            ? parsed
+            : throw Error(path, $"has unknown slot \"{slot}\". Use {string.Join(", ", StageSlots.Names)}");
+    }
+
+    private static string? ReadExpression(JsonElement e, string path, bool required)
+    {
+        var expression = required ? RequiredString(e, "expression", path) : OptionalString(e, "expression", path);
+        if (expression is not null && !Expressions.IsKnown(expression))
         {
-            "left" => StageSlot.Left,
-            "center" => StageSlot.Center,
-            "right" => StageSlot.Right,
-            _ => throw Error(path, $"has unknown slot \"{slot}\". Use left, center or right"),
-        };
+            throw Error(path, $"has unknown expression \"{expression}\". Use {string.Join(", ", Expressions.All)}");
+        }
+
+        return expression;
     }
 
     private static double ReadSeconds(JsonElement e, string path)

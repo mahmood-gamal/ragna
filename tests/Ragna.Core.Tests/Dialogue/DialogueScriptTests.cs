@@ -29,7 +29,7 @@ public sealed class DialogueScriptTests
               "commands": [
                 { "cmd": "enter", "character": "elder", "slot": "left", "expression": "sad" },
                 { "cmd": "enter", "character": "hero", "slot": "center" },
-                { "cmd": "expression", "character": "elder", "expression": "smile" },
+                { "cmd": "expression", "character": "elder", "expression": "happy" },
                 { "cmd": "say", "speaker": "elder", "text": "Hi." },
                 { "cmd": "say", "text": "Wind blows." },
                 { "cmd": "choice", "options": [ { "text": "A", "then": [ { "cmd": "end" } ] }, { "text": "B", "ifFlag": "f", "ifValue": false } ] },
@@ -49,7 +49,7 @@ public sealed class DialogueScriptTests
             [
                 new EnterCommand("elder", StageSlot.Left, "sad"),
                 new EnterCommand("hero", StageSlot.Center, DialogueRunner.DefaultExpression),
-                new ExpressionCommand("elder", "smile"),
+                new ExpressionCommand("elder", "happy"),
                 new SayCommand("elder", "Hi."),
                 new SayCommand(null, "Wind blows."),
             ],
@@ -81,6 +81,9 @@ public sealed class DialogueScriptTests
     [InlineData("""{ "id": "x", "commands": [ { "cmd": "say" } ] }""", "commands[0] needs a \"text\"")]
     [InlineData("""{ "id": "x", "commands": [ { "cmd": "say", "text": "a", "speakr": "b" } ] }""", "unknown field \"speakr\"")]
     [InlineData("""{ "id": "x", "commands": [ { "cmd": "enter", "character": "a", "slot": "top" } ] }""", "unknown slot \"top\"")]
+    [InlineData("""{ "id": "x", "commands": [ { "cmd": "enter", "character": "a", "slot": "left", "expression": "smile" } ] }""", "unknown expression \"smile\"")]
+    [InlineData("""{ "id": "x", "commands": [ { "cmd": "expression", "character": "a", "expression": "grin" } ] }""", "unknown expression \"grin\"")]
+    [InlineData("""{ "id": "x", "commands": [ { "cmd": "enter", "character": "a", "slot": "left", "flip": 1 } ] }""", "\"flip\" that is not true or false")]
     [InlineData("""{ "id": "x", "commands": [ { "cmd": "wait", "seconds": -1 } ] }""", "must be 0 or more")]
     [InlineData("""{ "id": "x", "commands": [ { "cmd": "wait" } ] }""", "needs a number \"seconds\"")]
     [InlineData("""{ "id": "x", "commands": [ { "cmd": "choice", "options": [] } ] }""", "needs at least one option")]
@@ -96,5 +99,45 @@ public sealed class DialogueScriptTests
         var error = Assert.Throws<InvalidDataException>(() => DialogueScript.FromJson(json));
 
         Assert.Contains(expected, error.Message);
+    }
+
+    [Fact]
+    public void Reads_group_slots_and_flip()
+    {
+        var script = DialogueScript.FromJson("""
+            {
+              "id": "group",
+              "commands": [
+                { "cmd": "enter", "character": "a", "slot": "far_left" },
+                { "cmd": "enter", "character": "b", "slot": "left", "flip": true },
+                { "cmd": "enter", "character": "c", "slot": "right", "expression": "surprised" },
+                { "cmd": "enter", "character": "d", "slot": "far_right", "flip": false }
+              ]
+            }
+            """);
+
+        Assert.Equal<DialogueCommand>(
+            [
+                new EnterCommand("a", StageSlot.FarLeft, Expressions.Neutral),
+                new EnterCommand("b", StageSlot.Left, Expressions.Neutral, Flip: true),
+                new EnterCommand("c", StageSlot.Right, Expressions.Surprised),
+                new EnterCommand("d", StageSlot.FarRight, Expressions.Neutral),
+            ],
+            script.Commands);
+    }
+
+    [Theory]
+    [InlineData("neutral")]
+    [InlineData("happy")]
+    [InlineData("angry")]
+    [InlineData("sad")]
+    [InlineData("surprised")]
+    public void Accepts_every_known_expression(string expression)
+    {
+        var script = DialogueScript.FromJson($$"""
+            { "id": "x", "commands": [ { "cmd": "enter", "character": "a", "slot": "left", "expression": "{{expression}}" } ] }
+            """);
+
+        Assert.Equal(expression, Assert.IsType<EnterCommand>(Assert.Single(script.Commands)).Expression);
     }
 }

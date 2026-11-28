@@ -17,7 +17,7 @@
     { "cmd": "choice", "options": [
       { "text": "Any work for me?",
         "then": [
-          { "cmd": "expression", "character": "elder", "expression": "smile" },
+          { "cmd": "expression", "character": "elder", "expression": "happy" },
           { "cmd": "say", "speaker": "elder", "text": "Slimes have been eating the crops. Thin them out." },
           { "cmd": "set_flag", "flag": "slime_quest" }
         ]

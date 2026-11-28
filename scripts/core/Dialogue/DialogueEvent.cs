@@ -13,7 +13,8 @@ public abstract record DialogueEvent
     public virtual bool Instant => true;
 }
 
-public sealed record CharacterEntered(string Character, StageSlot Slot, string Expression) : DialogueEvent;
+/// <summary>A character came on stage. <paramref name="Flip"/> is the script's <c>flip</c>; the UI combines it with <see cref="StageSlots.FacesLeft"/>.</summary>
+public sealed record CharacterEntered(string Character, StageSlot Slot, string Expression, bool Flip = false) : DialogueEvent;
 
 public sealed record CharacterExited(string Character, StageSlot Slot) : DialogueEvent;
 
